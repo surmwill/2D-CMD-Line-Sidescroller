@@ -52,6 +52,8 @@ void Display::refresh(void) {
 
 	// The number of character cells to which a character should be written
 	DWORD length = displayImpl->csbi.dwSize.X * displayImpl->csbi.dwSize.Y;
+
+	//some comment
 	
 	// The number of characters actually written
 	DWORD written;
