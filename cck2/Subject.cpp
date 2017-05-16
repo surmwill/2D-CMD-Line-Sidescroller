@@ -17,6 +17,14 @@ void Subject::notifyTileChange(
 	}
 }
 
+void Subject::notifyMultiTileChanges(
+	const vector <char> tiles,
+	bool entireScreen,
+	vector <Coordinate> * const tileCoords) {
+	//if not entireScreen call notifyTileChange on each of the tileCoords
+	//else call a new Observer abstract addressMultiTileChang fne which map and display will both have to implemenet
+}
+
 //Adds a single observer to the subject's notification list
 Subject & Subject::addObserver(Observer * const obs) {
 	observers.emplace_back(obs);

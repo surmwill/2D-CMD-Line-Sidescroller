@@ -4,14 +4,15 @@
 #include <string>
 #include <memory>
 #include "Observer.h"
+#include "Subject.h"
 #include <ostream>
 
 struct MapImpl;
 struct Coordinate;
 
-class Map : public Observer {
+class Map : public Observer, public Subject {
 public:
-	Map(const std::string & mapTxtFile);
+	Map(const std::string & mapTxtFile, Observer * const display);
 	~Map();
 	
 	virtual void addressTileChange(
