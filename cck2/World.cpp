@@ -2,6 +2,7 @@
 #include "LevelOne.h"
 #include <Windows.h>
 #include "WorldImpl.h"
+#include "Display.h"
 
 //delete these
 #include "Coordinate.h"
@@ -16,7 +17,7 @@ class Observer;
 intializes the map) */
 World::World() : worldImpl(make_unique <WorldImpl> ()) {
 	Observer * map = nullptr;
-	worldImpl->level = make_unique <LevelOne>(&map);
+	worldImpl->level = make_unique <LevelOne>(&map, (worldImpl->display).get());
 	worldImpl->player = make_unique <Player>(map);
 	//worldImpl->display.refresh();
 }

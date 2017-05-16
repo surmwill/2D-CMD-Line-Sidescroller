@@ -29,10 +29,15 @@ Display::Display(): displayImpl(make_unique <DisplayImpl> ()) {
 	SetConsoleScreenBufferSize(displayImpl->hOut, bufferSize);
 	SetConsoleWindowInfo(displayImpl->hOut, TRUE, &consoleBounds);
 
-	refresh();
+	//refresh();
 }
 
 Display::~Display() {}
+
+
+void Display::addressTileChange(const Coordinate & tile, const char newDesign) {
+	cout << "notified" << endl;
+}
 
 //from Cameron's stackoverflow answer: http://stackoverflow.com/questions/34842526/update-console-without-flickering-c/34843181
 void Display::refresh(void) {

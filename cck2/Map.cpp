@@ -8,6 +8,7 @@
 #include "Fstream.h"
 #include <string>
 #include <utility>
+#include "Coordinate.h"
 
 using std::make_unique;
 using std::vector;
@@ -16,11 +17,14 @@ using std::ostream;
 using std::string;
 
 /* We require a txt file with desired map design to read */
-Map::Map(const std::string & mapTxtFile):
+Map::Map(const std::string & mapTxtFile, Observer * const display):
 	mapImpl(make_unique<MapImpl>(mapTxtFile)) {
 	/* reads in the contents of the entire (rectangular) map */
 	mapImpl->map = std::move(mapImpl->fstream.readRectContent());
 	//cout << "THE ENTIRE MAP \n" << *this << endl;
+
+	//The map will notify the display with a section of map to be displayed
+	addObserver(display);
 }
 
 
@@ -62,13 +66,14 @@ void Map::updateVisibleArea(void) {
 		mapImpl->visibleArea.emplace_back(visibleLine);
 	}
 
-	printVisibleArea();
+	notifyVisibleArea();
+	//printVisibleArea();
 }
 
 /* notifies the display of a change in the map's visible area for
 the display to update */
 void Map::notifyVisibleArea(void) {
-	int x;
+	notifyTileChange(Coordinate{ 0, 0 }, 'a');
 }
 
 /* Adjusts the visible area of

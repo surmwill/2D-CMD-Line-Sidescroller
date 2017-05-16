@@ -11,6 +11,11 @@ public:
 		const Coordinate & tile,
 		const char newDesign);
 
+	void notifyMultiTileChanges(
+		const std::vector <char> tiles,
+		bool entireScreen = true,
+		std::vector <Coordinate> * const tileCoords = nullptr);
+
 protected:
 	Subject & addObserver(Observer * const obs);
 	Subject() = default;
