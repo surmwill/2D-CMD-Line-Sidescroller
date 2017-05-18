@@ -12,7 +12,7 @@ public:
 		const char newDesign);
 
 	void notifyMultiTileChanges(
-		const std::vector <char> tiles,
+		std::vector <char> * const tiles,
 		bool entireScreen = true,
 		std::vector <Coordinate> * const tileCoords = nullptr);
 
