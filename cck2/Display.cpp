@@ -7,6 +7,7 @@
 #include <Windows.h>
 
 using std::make_unique;
+using std::vector;
 
 //to delete
 #include "Iostream.h"
@@ -37,6 +38,10 @@ Display::~Display() {}
 
 void Display::addressTileChange(const Coordinate & tile, const char newDesign) {
 	cout << "notified" << endl;
+}
+
+void Display::addressFullTileChange(const vector <char> & newTiles) {
+	refresh();
 }
 
 //from Cameron's stackoverflow answer: http://stackoverflow.com/questions/34842526/update-console-without-flickering-c/34843181

@@ -1,7 +1,11 @@
 #include "Player.h"
 #include "PlayerImpl.h"
 
+//to delete
 #include "Iostream.h"
+#include <vector>
+#include "Coordinate.h"
+using std::vector;
 
 using std::make_unique;
 

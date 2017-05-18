@@ -18,11 +18,23 @@ void Subject::notifyTileChange(
 }
 
 void Subject::notifyMultiTileChanges(
-	const vector <char> tiles,
+	vector <char> * const tiles,
 	bool entireScreen,
 	vector <Coordinate> * const tileCoords) {
-	//if not entireScreen call notifyTileChange on each of the tileCoords
-	//else call a new Observer abstract addressMultiTileChang fne which map and display will both have to implemenet
+
+	/* If it's a full screen we don't need to know which tiles need changing
+	b/c they all do. Otherwise we individually notify each tile that needs changing */
+	if (!entireScreen) {
+		for (auto coord = tileCoords->rbegin(); coord != tileCoords->rend(); ++coord) {
+			notifyTileChange(*coord, tiles->back());
+			tiles->pop_back();
+		}
+	}
+	else {
+		for (auto &obs : observers) {
+			obs->addressFullTileChange(*tiles);
+		}
+	}
 }
 
 //Adds a single observer to the subject's notification list
