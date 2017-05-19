@@ -15,10 +15,6 @@ public:
 		std::vector <char> * const tiles,
 		std::vector <Coordinate> * const tileCoords);
 
-	void notifyMultiTileChanges(
-		std::vector <std::vector <char>> * const fullTiles
-	);
-
 protected:
 	Subject & addObserver(Observer * const obs);
 	Subject() = default;

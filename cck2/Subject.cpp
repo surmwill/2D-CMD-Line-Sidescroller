@@ -28,15 +28,6 @@ void Subject::notifyMultiTileChanges(
 	}
 }
 
-/* If we are updating the entire screen we don't need to know 
-which tiles need changing b/c they all do. */
-void Subject::notifyMultiTileChanges(
-	vector <vector <char>> * const fullTiles) {
-	for (auto &obs : observers) {
-		obs->addressFullTileChange(*fullTiles);
-	}
-}
-
 //Adds a single observer to the subject's notification list
 Subject & Subject::addObserver(Observer * const obs) {
 	observers.emplace_back(obs);

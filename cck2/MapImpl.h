@@ -6,6 +6,7 @@
 #include <vector>
 #include "Coordinate.h"
 #include <ostream>
+#include "Display.h"
 
 //to delete
 #include <iostream>
@@ -16,8 +17,9 @@ using std::pair;
 using std::vector;
 
 struct MapImpl final {
-	MapImpl(const string & mapTxtFile) :
+	MapImpl(const string & mapTxtFile, Display * const display) :
 		fstream(mapTxtFile),
+		display(display),
 		width(fstream.firstLineLength() - 1), // -1 b/c start counting from 0 instead of 1
 		height(fstream.numLines() - 1) {
 		map.reserve(width);
@@ -36,4 +38,6 @@ struct MapImpl final {
 	Coordinate visionOrigin{ 0, 0 }; 
 	vector <vector <char>> visibleArea;
 	vector <vector <char>> map;
+
+	Display * const display;
 };

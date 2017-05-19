@@ -12,13 +12,12 @@ class Display final : public Observer {
 		const Coordinate & tile,
 		const char newDesign) override;
 
-	virtual void addressFullTileChange(
-		const std::vector <std::vector <char>> & newTiles
-	) override;
-
 public:
 	Display();
 	~Display();
 	void refreshScreen(void);
+	void updateMapDesign(
+		const std::vector <std::vector <char>> & newTiles
+	);
 };
 

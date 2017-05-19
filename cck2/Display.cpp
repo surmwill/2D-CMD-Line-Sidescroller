@@ -40,7 +40,8 @@ void Display::addressTileChange(const Coordinate & tile, const char newDesign) {
 	cout << "notified" << endl;
 }
 
-void Display::addressFullTileChange(const vector <vector <char>> & newTiles) {
+/* Updates the portion of the map we are displaying */
+void Display::updateMapDesign(const vector <vector <char>> & newTiles) {
 	DWORD numChar;
 	int rowNum = 0;
 
@@ -61,7 +62,9 @@ void Display::addressFullTileChange(const vector <vector <char>> & newTiles) {
 	//refreshTile();
 }
 
-//from Cameron's stackoverflow answer: http://stackoverflow.com/questions/34842526/update-console-without-flickering-c/34843181
+/* Redraws the entire screen. This is called whenever the 
+player moves to redraw the section of the map we can see. 
+From Cameron's stackoverflow answer: http://stackoverflow.com/questions/34842526/update-console-without-flickering-c/34843181 */
 void Display::refreshScreen(void) {
 	/* Contains information about the console window such
 	as width and height */

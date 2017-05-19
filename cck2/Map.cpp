@@ -9,6 +9,7 @@
 #include <string>
 #include <utility>
 #include "Coordinate.h"
+#include "Display.h"
 
 using std::make_unique;
 using std::vector;
@@ -16,15 +17,12 @@ using std::move;
 using std::ostream;
 using std::string;
 
-/* We require a txt file with desired map design to read */
-Map::Map(const std::string & mapTxtFile, Observer * const display):
-	mapImpl(make_unique<MapImpl>(mapTxtFile)) {
+/* We require a txt file with desired map design to read and the display
+which we call directly to redraw the screen */
+Map::Map(const std::string & mapTxtFile, Display * const display):
+	mapImpl(make_unique<MapImpl>(mapTxtFile, display)) {
 	/* reads in the contents of the entire (rectangular) map */
 	mapImpl->map = std::move(mapImpl->fstream.readRectContent());
-	//cout << "THE ENTIRE MAP \n" << *this << endl;
-
-	//The map will notify the display with a section of map to be displayed
-	addObserver(display);
 }
 
 
@@ -70,11 +68,10 @@ void Map::updateVisibleArea(void) {
 	//printVisibleArea();
 }
 
-/* notifies the display of a change in the map's visible area for
-the display to update */
+/* notifies the display of a change in the map's visible area so
+the display knows how to redraw the screen */
 void Map::notifyVisibleArea(void) {
-	//updates the entire screen
-	notifyMultiTileChanges(&mapImpl->visibleArea);
+	mapImpl->display->updateMapDesign(mapImpl->visibleArea);
 }
 
 /* Adjusts the visible area of

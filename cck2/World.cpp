@@ -17,7 +17,14 @@ class Observer;
 intializes the map) */
 World::World() : worldImpl(make_unique <WorldImpl> ()) {
 	Observer * map = nullptr;
-	worldImpl->level = make_unique <LevelOne>(&map, (worldImpl->display).get());
+
+	/* We want the Map to call a specific Display function to redraw the 
+	entire screen. Since we don't want to write a Observer function geared
+	towards only 1 type of observer (the display) and not other observers (the map)
+	we cast the display from an Observer to it's actual class, Display */
+	worldImpl->level = make_unique <LevelOne>(
+		&map, dynamic_cast <Display *> ((worldImpl->display).get()));
+
 	worldImpl->player = make_unique <Player>(map);
 	//worldImpl->display.refresh();
 }
