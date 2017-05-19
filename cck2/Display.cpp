@@ -40,12 +40,29 @@ void Display::addressTileChange(const Coordinate & tile, const char newDesign) {
 	cout << "notified" << endl;
 }
 
-void Display::addressFullTileChange(const vector <char> & newTiles) {
-	refresh();
+void Display::addressFullTileChange(const vector <vector <char>> & newTiles) {
+	DWORD numChar;
+	int rowNum = 0;
+
+	//WriteConsoleOutputCharacter
+
+	COORD write;
+	write.X = 0;
+	write.Y = 0;
+
+	for (auto row : displayImpl->screen) {
+		FillConsoleOutputCharacter(displayImpl->hOut, '@', row.size(), write, &numChar);
+		write.Y++;
+	}
+
+	// << displayImpl->screen.size();
+
+	SetConsoleCursorPosition(displayImpl->hOut, COORD{ 0,0 });
+	//refreshTile();
 }
 
 //from Cameron's stackoverflow answer: http://stackoverflow.com/questions/34842526/update-console-without-flickering-c/34843181
-void Display::refresh(void) {
+void Display::refreshScreen(void) {
 	/* Contains information about the console window such
 	as width and height */
 	COORD topLeft = { 0, 0 };
@@ -62,8 +79,6 @@ void Display::refresh(void) {
 
 	// The number of character cells to which a character should be written
 	DWORD length = displayImpl->csbi.dwSize.X * displayImpl->csbi.dwSize.Y;
-
-	//some comment changes
 	
 	// The number of characters actually written
 	DWORD written;

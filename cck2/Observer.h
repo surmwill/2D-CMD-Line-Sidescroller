@@ -13,7 +13,7 @@ public:
 		const char newDesign) = 0;
 
 	virtual void addressFullTileChange(
-		const std::vector <char> & newTiles
+		const std::vector <std::vector <char>> & newTiles
 	);
 
 	inline virtual ~Observer() = default;

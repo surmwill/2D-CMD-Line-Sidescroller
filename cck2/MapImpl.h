@@ -31,9 +31,9 @@ struct MapImpl final {
 	const int minYBoundary = 0;
 
 	/* The amount of tiles we can see ahead from our current position (10, 10) */
-	const int visibleDistanceX = 10, visibleDistanceY = 10; 
+	const int visibleDistanceX = 40, visibleDistanceY = 12; 
 
-	Coordinate visionOrigin{ 0, 0 }; //11,11 is @
+	Coordinate visionOrigin{ 0, 0 }; 
 	vector <vector <char>> visibleArea;
 	vector <vector <char>> map;
 };

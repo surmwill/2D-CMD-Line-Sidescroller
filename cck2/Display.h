@@ -13,12 +13,12 @@ class Display final : public Observer {
 		const char newDesign) override;
 
 	virtual void addressFullTileChange(
-		const std::vector <char> & newTiles
+		const std::vector <std::vector <char>> & newTiles
 	) override;
 
 public:
 	Display();
 	~Display();
-	void refresh(void);
+	void refreshScreen(void);
 };
 

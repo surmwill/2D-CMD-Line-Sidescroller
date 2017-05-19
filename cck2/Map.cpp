@@ -73,10 +73,8 @@ void Map::updateVisibleArea(void) {
 /* notifies the display of a change in the map's visible area for
 the display to update */
 void Map::notifyVisibleArea(void) {
-	//notifyTileChange(Coordinate{ 0, 0 }, 'a');
-	//vector <Coordinate> coords{ Coordinate{ 0, 0} };
-	vector <char> design{ 'a' };
-	notifyMultiTileChanges(&design);
+	//updates the entire screen
+	notifyMultiTileChanges(&mapImpl->visibleArea);
 }
 
 /* Adjusts the visible area of
