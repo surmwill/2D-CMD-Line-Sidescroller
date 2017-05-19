@@ -17,23 +17,14 @@ void Subject::notifyTileChange(
 	}
 }
 
+/* Updates the tiles at tileCoords of a change in design */
 void Subject::notifyMultiTileChanges(
 	vector <char> * const tiles,
-	bool entireScreen,
 	vector <Coordinate> * const tileCoords) {
 
-	/* If it's a full screen we don't need to know which tiles need changing
-	b/c they all do. Otherwise we individually notify each tile that needs changing */
-	if (!entireScreen) {
-		for (auto coord = tileCoords->rbegin(); coord != tileCoords->rend(); ++coord) {
-			notifyTileChange(*coord, tiles->back());
-			tiles->pop_back();
-		}
-	}
-	else {
-		for (auto &obs : observers) {
-			obs->addressFullTileChange(*tiles);
-		}
+	for (auto coord = tileCoords->rbegin(); coord != tileCoords->rend(); ++coord) {
+		notifyTileChange(*coord, tiles->back());
+		tiles->pop_back();
 	}
 }
 

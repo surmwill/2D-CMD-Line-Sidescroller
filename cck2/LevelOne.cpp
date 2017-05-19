@@ -4,7 +4,7 @@
 
 using std::make_shared;
 
-LevelOne::LevelOne(Observer ** const map, Observer * const display) {
+LevelOne::LevelOne(Observer ** const map, Display * const display) {
 	auto noDelete = [](Observer*) {};
 	*map = new Map{ "LevelOne\\LevelOne.txt", display };
 

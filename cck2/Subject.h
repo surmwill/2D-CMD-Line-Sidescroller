@@ -13,8 +13,7 @@ public:
 
 	void notifyMultiTileChanges(
 		std::vector <char> * const tiles,
-		bool entireScreen = true,
-		std::vector <Coordinate> * const tileCoords = nullptr);
+		std::vector <Coordinate> * const tileCoords);
 
 protected:
 	Subject & addObserver(Observer * const obs);

@@ -12,10 +12,6 @@ public:
 		const Coordinate & tile,
 		const char newDesign) = 0;
 
-	virtual void addressFullTileChange(
-		const std::vector <char> & newTiles
-	);
-
 	inline virtual ~Observer() = default;
 
 protected:
