@@ -40,26 +40,98 @@ void Display::addressTileChange(const Coordinate & tile, const char newDesign) {
 	cout << "notified" << endl;
 }
 
+/* shorthand for FillConsolOutput since displayImpl->hOut
+and &charsWritten are always the same */
+void Display::writeConsole(const WCHAR toWrite, const DWORD length, const COORD & cursor) {
+	DWORD charsWritten;
+
+	FillConsoleOutputCharacter(
+		displayImpl->hOut,
+		toWrite,
+		length,
+		cursor,
+		&charsWritten
+	);
+}
+
+/* updates the cursor position based on how many characters we
+have just written to the screen */
+void Display::updateCursorPos(const int numWrites, COORD & cursor) {
+	const int rowsToAdd = numWrites / displayImpl->consoleWidth;
+	if (rowsToAdd != 0) cursor.X = 0;
+
+	cursor.Y += rowsToAdd;
+	cursor.X += rowsToAdd - (rowsToAdd * displayImpl->consoleWidth);
+}
+
 /* Updates the portion of the map we are displaying */
-void Display::updateMapDesign(const vector <vector <char>> & newTiles) {
-	DWORD numChar;
-	int rowNum = 0;
+void Display::refreshMap(const vector <vector <char>> & newTiles) {
+	//to remove
+	return;
 
-	//WriteConsoleOutputCharacter
+	int prevScreenMaxRow = displayImpl->prevDisplay.size();
+	int prevScreenMaxCol = displayImpl->prevDisplay[0].size();
+	DWORD numWrites = 0;
+	COORD cursor{ 0, 0 };
+	WCHAR toWrite = '\t'; //inital value that will NEVER appear on a map. Only ' ' will be used for whitespace
 
-	COORD write;
-	write.X = 0;
-	write.Y = 0;
+	/* Go through the previous visible area and redraw only the 
+	characters that differ */
+	for (int i = 0; i < displayImpl->prevDisplay.size(); i++) {
+		for (int j = 0; j < displayImpl->prevDisplay[0].size(); j++) {
+			//If we have a tile that differs from its previous draw
+			if (newTiles[i][j] != displayImpl->prevDisplay[i][j]) {
+				// initializes toWrite to the first character that needs to be redrawn
+				if (toWrite == '\t') toWrite = newTiles[i][j];
 
-	for (auto row : displayImpl->screen) {
-		FillConsoleOutputCharacter(displayImpl->hOut, '@', row.size(), write, &numChar);
-		write.Y++;
+				// If we have multiple of the same character, draw the batch all at once
+				if (newTiles[i][j] == toWrite) numWrites++; //note that numWrites starts at 0
+				else { 
+					//Draws the updated tile(s)
+					writeConsole(toWrite, numWrites, cursor);
+
+					// adjust the cursor to the next drawing poistion
+					updateCursorPos(numWrites, cursor);
+
+					numWrites = 1; //we reset the count to only 1 character
+					toWrite = newTiles[i][j]; //the next character to be drawn
+				}
+			}
+			else cursor.X++;
+		}
 	}
 
-	// << displayImpl->screen.size();
+	/* Because we draw the characters in batches, we are always one
+	step behind the display. Thus, the last character(s) won't be drawn. 
+	A final writeConsole fixes the problem. */
+	writeConsole(toWrite, numWrites, cursor);
 
-	SetConsoleCursorPosition(displayImpl->hOut, COORD{ 0,0 });
-	//refreshTile();
+	//reset these vars, as we enter an (near) identical loop as above
+	numWrites = 0;
+	toWrite = '\t';
+
+	/* The previous visible area may be smaller than updated visible area. 
+	These new characters automatically differ and must be printed */
+	for (int i = displayImpl->prevDisplay.size(); i < newTiles.size(); i++) {
+		for (int j = displayImpl->prevDisplay[0].size(); j < newTiles[0].size(); j++) {
+			if (toWrite == '\t') toWrite = newTiles[i][j];
+
+			if (newTiles[i][j] == toWrite) numWrites++; //again note that numWrites starts at 0
+			else {
+				writeConsole(toWrite, numWrites, cursor);
+
+				// adjust the cursor to the next drawing poistion
+				updateCursorPos(numWrites, cursor);
+
+				numWrites = 1; //we reset the count to only 1 character
+				toWrite = newTiles[i][j]; //the next character to be drawn
+			}
+		}
+	}
+
+	//same problem (and solution) as before
+	writeConsole(toWrite, numWrites, cursor);
+
 }
 
 /* Redraws the entire screen. This is called whenever the 

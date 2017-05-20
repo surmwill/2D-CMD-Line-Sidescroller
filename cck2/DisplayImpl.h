@@ -6,7 +6,7 @@
 
 struct DisplayImpl {
 	DisplayImpl() : hOut(GetStdHandle(STD_OUTPUT_HANDLE)) {
-		screen.reserve(consoleHeight);
+		prevDisplay.reserve(consoleHeight);
 		for (int i = 0; i < consoleHeight; i++) {
 			std::vector <char> line;
 			line.reserve(consoleWidth);
@@ -14,7 +14,7 @@ struct DisplayImpl {
 			for (int j = 0; j < consoleWidth; j++) {
 				line.insert(line.end(), '@');
 			}
-			screen.emplace_back(line);
+			prevDisplay.emplace_back(line);
 		}
 		
 	};
@@ -23,5 +23,8 @@ struct DisplayImpl {
 	CONSOLE_SCREEN_BUFFER_INFO csbi;
 	const SHORT consoleWidth = 81; //chars across (81)
 	const SHORT consoleHeight = 25; //number of lines (25)
-	std::vector <std::vector <char>> screen;
+
+	/* since most of the map will be spaces, if we start with a screen
+	full of spaces and only redraw the non spaces we eliminate some redrawing */
+	std::vector <std::vector <char>> prevDisplay;
 };
