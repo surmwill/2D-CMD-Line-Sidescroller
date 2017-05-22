@@ -4,10 +4,15 @@
 #include "Observer.h"
 #include <Windows.h>
 
+
+//to delete
+#include <fstream>
+
 struct DisplayImpl;
 
 class Display final : public Observer {
 	std::unique_ptr <DisplayImpl> displayImpl;
+	std::ofstream ofs{ "Debug.txt" };
 
 	virtual void addressTileChange(
 		const Coordinate & tile,
