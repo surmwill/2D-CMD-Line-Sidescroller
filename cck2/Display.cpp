@@ -8,6 +8,7 @@
 
 using std::make_unique;
 using std::vector;
+using std::move;
 
 //to delete
 #include "Iostream.h"
@@ -41,8 +42,9 @@ void Display::addressTileChange(const Coordinate & tile, const char newDesign) {
 }
 
 /* shorthand for FillConsolOutput since displayImpl->hOut
-and &charsWritten are always the same */
-void Display::writeConsole(const WCHAR toWrite, const DWORD length, const COORD & cursor) {
+and &charsWritten are always the same. Also updates the cursor to
+the next open position in the buffer */
+void Display::writeConsole(const WCHAR toWrite, const DWORD length, COORD & cursor) {
 	DWORD charsWritten;
 
 	FillConsoleOutputCharacter(
@@ -52,6 +54,8 @@ void Display::writeConsole(const WCHAR toWrite, const DWORD length, const COORD 
 		cursor,
 		&charsWritten
 	);
+
+	updateCursorPos(length, cursor);
 }
 
 /* updates the cursor position based on how many characters we
@@ -65,111 +69,60 @@ void Display::updateCursorPos(const int numWrites, COORD & cursor) {
 
 /* Updates the portion of the map we are displaying */
 void Display::refreshMap(const vector <vector <char>> & newTiles) {
-	int prevScreenMaxRow = displayImpl->prevDisplay.size();
-	int prevScreenMaxCol = displayImpl->prevDisplay[0].size();
 	DWORD numWrites = 0;
 	COORD cursor{ 0, 0 };
-	WCHAR toWrite = '\t'; //inital value that will NEVER appear on a map. Only ' ' will be used for whitespace
 
-	// The number of character cells to which a character should be written
-	//DWORD length = displayImpl->csbi.dwSize.X * displayImpl->csbi.dwSize.Y;
+	//inital value that will NEVER appear on a map. Only ' ' will be used for whitespace
+	WCHAR toWrite = '\t';
 
-	//writeConsole(' ', length, COORD{ 0,0 });
+	std::ofstream ofs{ "Debug.txt" };
 
-	//cout << displayImpl->prevDisplay[0].size() << ' ' << newTiles[0].size() << endl;
-	//return;
+	/* this will be updated as newTiles get written to the screen, prevDisplay
+	will eventually be set equal to this */
+	vector <vector <char>> prevDraw(
+		displayImpl->consoleHeight, 
+		vector <char>(displayImpl->consoleWidth, ' '));
 
-	/*for (unsigned int i = 0; i < displayImpl->prevDisplay.size() && i < newTiles.size(); i++) {
-		for (unsigned int j = 0; j < displayImpl->prevDisplay[0].size() && j < newTiles[0].size(); j++) {
-			writeConsole(newTiles[i][j], 1, cursor);
-			cursor.X++;
-		}
-		cursor.Y++;
-		cursor.X = 0;
-	} */
-
-
-	//return;
-
-	/* Go through the previous visible area and redraw only the 
-	characters that differ */
-	/*for (unsigned int i = 0; i < displayImpl->prevDisplay.size() && i < newTiles.size(); i++) {
-		for (unsigned int j = 0; j < displayImpl->prevDisplay[0].size() && j < newTiles[0].size(); j++) {
-
-			ofs << newTiles[i][j] << ' ' << displayImpl->prevDisplay[i][j] << '\n';
-
-			//If we have a tile that differs from its previous draw
-			if (newTiles[i][j] != displayImpl->prevDisplay[i][j]) {
-				// initializes toWrite to the first character that needs to be redrawn
-				if (toWrite == '\t') toWrite = newTiles[i][j];
-
-				ofs << "to write " << toWrite << ' ' << numWrites << '\n';
-
-				// If we have multiple of the same character, draw the batch all at once
-				if (newTiles[i][j] == toWrite) numWrites++; //note that numWrites starts at 0
-				else {
-					ofs << "writing" << '\n';
-					ofs << "cursor " << cursor.X << ' ' << cursor.Y << '\n';
-
-					//Draws the updated tile(s)
-					writeConsole(toWrite, numWrites, cursor);
-
-					// adjust the cursor to the next drawing poistion
-					updateCursorPos(numWrites, cursor);
-
-					numWrites = 1; //we reset the count to only 1 character
-					toWrite = newTiles[i][j]; //the next character to be drawn
-				}
-			}
-			else cursor.X++;
-		}
-	}*/
-
-	/* Because we draw the characters in batches, we are always one
-	step behind the display. Thus, the last character(s) won't be drawn. 
-	A final writeConsole fixes the problem. */
-	//writeConsole(toWrite, numWrites, cursor);
-
-	//reset these vars, as we enter an (near) identical loop as above
-	//numWrites = 0;
-	//toWrite = '\t';
-
-	/* *******************Go through the previous visible area and redraw only the
+	/* Go through the previous visible area and redraw only the
 	characters that differ */
 	for (unsigned int i = 0; i < displayImpl->prevDisplay.size(); i++) {
-
-		/* If the visible area is smaller than the entire screen (height wise), populate
-		the rows of the map we cannot see with spaces */
+		/* Special case: If the visible area is smaller than the entire screen (height wise) which 
+		newTiles covers, populate the rows of the map we cannot see with spaces */
 		if (i >= newTiles.size()) {
-			writeConsole(toWrite, numWrites, cursor);
-			updateCursorPos(numWrites, cursor);
-
 			const int rows = displayImpl->prevDisplay.size() - newTiles.size();
-			numWrites = rows * displayImpl->consoleWidth;
+			const int numSpaces = rows * displayImpl->consoleWidth;
 
-			writeConsole(' ', numWrites, cursor);
-			updateCursorPos(numWrites, cursor);
-			break;
+			/* If spaces are already in the buffer simply add on to the number of
+			spaces we print */
+			if (toWrite == ' ') numWrites += numSpaces;
+			else { //otherwise print what's in the buffer and add the correct number of spaces to the buffer
+				writeConsole(toWrite, numWrites, cursor);
+				numWrites = numSpaces;
+				toWrite = '+';
+			}
+
+			writeConsole(toWrite, numWrites, cursor);
+			numWrites = 0;
+
+			//Since these are the final rows in the console, there is nothing left to print after
+			break; 
 		}
 
 		for (unsigned int j = 0; j < displayImpl->prevDisplay[0].size(); j++) {
-			/* If the visible area is smaller than the entire screen (width wise), populate
-			the columns at the end of the row with spaces*/
+			/* Special case: If the visible area is smaller than the entire screen (width wise), 
+			populate the columns at the end of the row with spaces*/
 			if (j >= newTiles[0].size()) {
 				int numSpaces = displayImpl->prevDisplay[0].size() - newTiles[0].size();
 
-				//If we are already about to print spaces simply add on to the buffer
 				if (toWrite == ' ') numWrites += numSpaces; 
-				else { //Otherwise write what's in the buffer and prepare the buffer to print spaces
+				else { 
 					writeConsole(toWrite, numWrites, cursor);
-					updateCursorPos(numWrites, cursor);
 					numWrites = numSpaces;
-					toWrite = ' ';
+					toWrite = '+';
 				}
 
 				//prints the spaces and resets toWrite and numWrites to their default values
 				writeConsole(toWrite, numWrites, cursor);
-				updateCursorPos(numWrites, cursor);
 				toWrite = '\t';
 				numWrites = 0;
 
@@ -177,34 +130,56 @@ void Display::refreshMap(const vector <vector <char>> & newTiles) {
 				break;
 			}
 
-			//ofs << newTiles[i][j] << ' ' << displayImpl->prevDisplay[i][j] << '\n';
+			/* as we print the newTiles we also store them as previously drawn, for
+			the next set of newTiles. This was not needed for the cases before b/c
+			prevDraw is already initialized to spaces. */
+			prevDraw[i][j] = newTiles[i][j];
 
-			//If we have a tile that differs from its previous draw
+			//Main case: For every newTile that differs from its previous draw
 			if (newTiles[i][j] != displayImpl->prevDisplay[i][j]) {
+				//writeConsole(newTiles[i][j], 1, cursor);
+				ofs << displayImpl->prevDisplay[i][j] << newTiles[i][j] << ' ';
+
 				// initializes toWrite to the first character that needs to be redrawn
 				if (toWrite == '\t') toWrite = newTiles[i][j];
-
-				ofs << "to write " << toWrite << ' ' << numWrites << '\n';
 
 				// If we have multiple of the same character, draw the batch all at once
 				if (newTiles[i][j] == toWrite) numWrites++; //note that numWrites starts at 0
 				else {
-					ofs << "writing" << '\n';
-					ofs << "cursor " << cursor.X << ' ' << cursor.Y << '\n';
-
-					//Draws the updated tile(s)
+					//Draws the updated tile(s) and adjusts the cursor to the next drawing poistion
 					writeConsole(toWrite, numWrites, cursor);
-
-					// adjust the cursor to the next drawing poistion
-					updateCursorPos(numWrites, cursor);
 
 					numWrites = 1; //we reset the count to only 1 character
 					toWrite = newTiles[i][j]; //the next character to be drawn
-				}
+				} 
 			}
-			else cursor.X++;
+			else {
+				if (numWrites != 0) {
+					writeConsole(toWrite, numWrites, cursor);
+					toWrite == '\t';
+					numWrites = 0;
+				}
+				//writeConsole('+', 1, cursor);
+				cursor.X++;
+			} 
 		} 
+
 	} 
+
+	/* The screen's output is always one step behind the buffer. Thus, one final
+	write is needed to print the final char(s) left in the buffer */
+	writeConsole(toWrite, numWrites, cursor);
+
+	ofs << '\n';
+
+	for (auto row : prevDraw) {
+		for (auto col : row) {
+			ofs << col;
+		}
+		ofs << '\n';
+	}
+
+	displayImpl->prevDisplay = move(prevDraw);
 }
 
 /* Redraws the entire screen. This is called whenever the 

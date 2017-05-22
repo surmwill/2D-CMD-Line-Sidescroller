@@ -19,7 +19,7 @@ class Display final : public Observer {
 		const char newDesign) override;
 
 	void updateCursorPos(const int numWrites, COORD & cursor);
-	void writeConsole(const WCHAR toWrite, const DWORD length, const COORD & cursor);
+	void writeConsole(const WCHAR toWrite, const DWORD length, COORD & cursor);
 
 public:
 	Display();
