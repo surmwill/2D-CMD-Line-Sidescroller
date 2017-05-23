@@ -25,7 +25,7 @@ World::World() : worldImpl(make_unique <WorldImpl> ()) {
 	worldImpl->level = make_unique <LevelOne>(
 		&map, dynamic_cast <Display *> (worldImpl->display.get()));
 
-	worldImpl->player = make_unique <Player>(map, worldImpl->display.get());
+	worldImpl->player = make_unique <Player>(map);
 }
 
 

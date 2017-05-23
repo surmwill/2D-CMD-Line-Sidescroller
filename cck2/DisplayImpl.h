@@ -1,8 +1,8 @@
 #pragma once
 #include <Windows.h>
 #include <vector>
-
-//displayImpl->hOut(GetStdHandle(STD_OUTPUT_HANDLE))
+#include "Coordinate.h"
+#include <utility>
 
 struct DisplayImpl {
 	DisplayImpl() : hOut(GetStdHandle(STD_OUTPUT_HANDLE)) {
@@ -12,7 +12,7 @@ struct DisplayImpl {
 			line.reserve(consoleWidth);
 
 			for (int j = 0; j < consoleWidth; j++) {
-				line.insert(line.end(), '+');
+				line.insert(line.end(), '`');
 			}
 			prevDisplay.emplace_back(line);
 		}

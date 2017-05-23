@@ -10,6 +10,7 @@
 
 //to delete
 #include <iostream>
+#include "Debug.h"
 
 using std::string;
 using std::ifstream;
@@ -35,7 +36,7 @@ struct MapImpl final {
 	/* The amount of tiles we can see ahead from our current position (10, 10) */
 	const int visibleDistanceX = 40, visibleDistanceY = 12; 
 
-	Coordinate visionOrigin{ 0, 0 }; 
+	Coordinate playerOrigin{ 0, 0 }; 
 	vector <vector <char>> visibleArea;
 	vector <vector <char>> map;
 
