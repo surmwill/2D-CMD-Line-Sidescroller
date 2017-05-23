@@ -20,6 +20,8 @@ class Display final : public Observer {
 
 	void updateCursorPos(const int numWrites, COORD & cursor);
 	void writeConsole(const WCHAR toWrite, const DWORD length, COORD & cursor);
+	void setConsoleDimensions(void);
+	void disableConsoleCursor(void);
 
 public:
 	Display();

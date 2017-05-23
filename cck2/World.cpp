@@ -23,10 +23,9 @@ World::World() : worldImpl(make_unique <WorldImpl> ()) {
 	towards only 1 type of observer (the display) and not other observers (the map)
 	we cast the display from an Observer to it's actual class, Display */
 	worldImpl->level = make_unique <LevelOne>(
-		&map, dynamic_cast <Display *> ((worldImpl->display).get()));
+		&map, dynamic_cast <Display *> (worldImpl->display.get()));
 
-	worldImpl->player = make_unique <Player>(map);
-	//worldImpl->display.refresh();
+	worldImpl->player = make_unique <Player>(map, worldImpl->display.get());
 }
 
 

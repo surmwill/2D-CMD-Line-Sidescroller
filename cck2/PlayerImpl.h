@@ -4,5 +4,5 @@
 
 struct PlayerImpl {
 	Coordinate position{ 0 , 0 };
-	const char playerTile = 'A';
+	const char playerTile = ',';
 };

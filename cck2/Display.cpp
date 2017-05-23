@@ -1,6 +1,7 @@
 #include "Display.h"
 #include "Iostream.h"
 #include "DisplayImpl.h"
+#include "Coordinate.h"
 
 //#define NOMINMAX
 //#define WIN32_LEAN_AND_MEAN
@@ -13,12 +14,32 @@ using std::move;
 //to delete
 #include "Iostream.h"
 
-// MIL - Get the Win32 handle representing standard output
+/* Intializes the console screen by setting its dimensions and 
+hiding the flashing cursor */
 Display::Display(): displayImpl(make_unique <DisplayImpl> ()) {
+	setConsoleDimensions();
+	disableConsoleCursor();
+}
+
+Display::~Display() {}
+
+/* Hides the flashing console cursor */
+void Display::disableConsoleCursor(void) {
+	CONSOLE_CURSOR_INFO cci;
+	GetConsoleCursorInfo(displayImpl->hOut, &cci);
+	cci.bVisible = FALSE;
+	SetConsoleCursorInfo(displayImpl->hOut, &cci);
+}
+
+/* Adjusts the console screen size and buffer size according to displayImpl::consoleWidth
+and displayImpl::consoleHeight. The buffer is adjusted to perfectly match the screen size,
+eliminating the scroll bar */
+void Display::setConsoleDimensions(void) {
+	// Specifies the dimensions of the buffer
 	COORD bufferSize{ displayImpl->consoleWidth , displayImpl->consoleHeight };
 
-	/* Specifies the dimensions of the console screen in lines. 
-	The parameters are left, top, right, bottom respectivly. Note the 
+	/* Specifies the dimensions of the console screen in lines.
+	The parameters are left, top, right, bottom respectivly. Note the
 	area of the console is the same as that of that of the bufferSize. An
 	equal sized console and buffer eliminates the scrollbar. */
 	SMALL_RECT consoleBounds{
@@ -31,17 +52,17 @@ Display::Display(): displayImpl(make_unique <DisplayImpl> ()) {
 	SetConsoleScreenBufferSize(displayImpl->hOut, bufferSize);
 	SetConsoleWindowInfo(displayImpl->hOut, TRUE, &consoleBounds);
 
-	//refresh();
 }
 
-Display::~Display() {}
-
-
+/* Updates and displays a singular tile on the visible map. */
 void Display::addressTileChange(const Coordinate & tile, const char newDesign) {
-	cout << "notified" << endl;
+	COORD cursor{ tile.x, tile.y };
+
+	writeConsole(newDesign, 1, cursor);
+	displayImpl->prevDisplay[tile.y][tile.x] = newDesign;
 }
 
-/* shorthand for FillConsolOutput since displayImpl->hOut
+/* shorthand for FillConsoleOutput since displayImpl->hOut
 and &charsWritten are always the same. Also updates the cursor to
 the next open position in the buffer */
 void Display::writeConsole(const WCHAR toWrite, const DWORD length, COORD & cursor) {
@@ -75,7 +96,11 @@ void Display::refreshMap(const vector <vector <char>> & newTiles) {
 	//inital value that will NEVER appear on a map. Only ' ' will be used for whitespace
 	WCHAR toWrite = '\t';
 
-	std::ofstream ofs{ "Debug.txt" };
+	/* lambda to set numWrites and toWrite values. Main purpose is to help clean the code */
+	auto adjustWriteProperties = [&numWrites, &toWrite](const int newNum, const char newChar) {
+		numWrites = newNum;
+		toWrite = newChar;
+	};
 
 	/* this will be updated as newTiles get written to the screen, prevDisplay
 	will eventually be set equal to this */
@@ -95,14 +120,19 @@ void Display::refreshMap(const vector <vector <char>> & newTiles) {
 			/* If spaces are already in the buffer simply add on to the number of
 			spaces we print */
 			if (toWrite == ' ') numWrites += numSpaces;
-			else { //otherwise print what's in the buffer and add the correct number of spaces to the buffer
+			else { 
+				//otherwise print what's in the buffer
 				writeConsole(toWrite, numWrites, cursor);
-				numWrites = numSpaces;
-				toWrite = '+';
+
+				// and add the correct number of spaces to printed to the buffer
+				adjustWriteProperties(numSpaces, ' ');
 			}
 
+			//print the spaces
 			writeConsole(toWrite, numWrites, cursor);
-			numWrites = 0;
+
+			// resets toWrite and numWrites to their default values
+			adjustWriteProperties(0, '\t');
 
 			//Since these are the final rows in the console, there is nothing left to print after
 			break; 
@@ -117,28 +147,23 @@ void Display::refreshMap(const vector <vector <char>> & newTiles) {
 				if (toWrite == ' ') numWrites += numSpaces; 
 				else { 
 					writeConsole(toWrite, numWrites, cursor);
-					numWrites = numSpaces;
-					toWrite = '+';
+					adjustWriteProperties(numSpaces, ' ');
 				}
 
-				//prints the spaces and resets toWrite and numWrites to their default values
 				writeConsole(toWrite, numWrites, cursor);
-				toWrite = '\t';
-				numWrites = 0;
+				adjustWriteProperties(0, '\t');
 
 				//continue on to printing the next row
 				break;
 			}
 
-			/* as we print the newTiles we also store them as previously drawn, for
-			the next set of newTiles. This was not needed for the cases before b/c
-			prevDraw is already initialized to spaces. */
+			/* as we print the newTiles we also store them as what was previously drawn 
+			on the screen, for the next set of newTiles. This was not needed for the cases 
+			before b/c prevDraw is already initialized to spaces. */
 			prevDraw[i][j] = newTiles[i][j];
 
 			//Main case: For every newTile that differs from its previous draw
 			if (newTiles[i][j] != displayImpl->prevDisplay[i][j]) {
-				//writeConsole(newTiles[i][j], 1, cursor);
-				ofs << displayImpl->prevDisplay[i][j] << newTiles[i][j] << ' ';
 
 				// initializes toWrite to the first character that needs to be redrawn
 				if (toWrite == '\t') toWrite = newTiles[i][j];
@@ -146,21 +171,25 @@ void Display::refreshMap(const vector <vector <char>> & newTiles) {
 				// If we have multiple of the same character, draw the batch all at once
 				if (newTiles[i][j] == toWrite) numWrites++; //note that numWrites starts at 0
 				else {
-					//Draws the updated tile(s) and adjusts the cursor to the next drawing poistion
+					/* Draws the updated tile(s) and adjusts the cursor to the next drawing poistion */
 					writeConsole(toWrite, numWrites, cursor);
 
-					numWrites = 1; //we reset the count to only 1 character
-					toWrite = newTiles[i][j]; //the next character to be drawn
+					/* Sets the buffer to the next tile design to be printed. Since we already 
+					encountered 1 of the tile, it follos that we print at least 1 */
+					adjustWriteProperties(1, newTiles[i][j]);
 				} 
 			}
-			else {
+			else { //Main case: for every newTile that is the same as its previous draw:
+				/* If there are tile(s) to be printed in the buffer. Print them first
+				as we will be updating the cursor to jump over the un-changed tile */
 				if (numWrites != 0) {
 					writeConsole(toWrite, numWrites, cursor);
-					toWrite == '\t';
-					numWrites = 0;
+					adjustWriteProperties(0, '\t');
 				}
-				//writeConsole('+', 1, cursor);
-				cursor.X++;
+
+				/* moves the cursor one forward, skipping the tile. If the tile
+				is the same there as the last draw, there is no need to redraw it */
+				updateCursorPos(1, cursor);
 			} 
 		} 
 
@@ -170,15 +199,7 @@ void Display::refreshMap(const vector <vector <char>> & newTiles) {
 	write is needed to print the final char(s) left in the buffer */
 	writeConsole(toWrite, numWrites, cursor);
 
-	ofs << '\n';
-
-	for (auto row : prevDraw) {
-		for (auto col : row) {
-			ofs << col;
-		}
-		ofs << '\n';
-	}
-
+	// Our previous display becomes what was just drawn
 	displayImpl->prevDisplay = move(prevDraw);
 }
 

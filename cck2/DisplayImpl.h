@@ -12,7 +12,7 @@ struct DisplayImpl {
 			line.reserve(consoleWidth);
 
 			for (int j = 0; j < consoleWidth; j++) {
-				line.insert(line.end(), ' ');
+				line.insert(line.end(), '+');
 			}
 			prevDisplay.emplace_back(line);
 		}
