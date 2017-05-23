@@ -23,6 +23,8 @@ Map::Map(const std::string & mapTxtFile, Display * const display):
 	mapImpl(make_unique<MapImpl>(mapTxtFile, display)) {
 	/* reads in the contents of the entire (rectangular) map */
 	mapImpl->map = std::move(mapImpl->fstream.readRectContent());
+
+	updateVisibleArea();
 }
 
 

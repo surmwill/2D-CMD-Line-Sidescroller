@@ -10,6 +10,7 @@ using std::istreambuf_iterator;
 using std::vector;
 using std::numeric_limits;
 using std::ios_base;
+using std::noskipws;
 
 //to delete
 #include "Iostream.h"
@@ -17,7 +18,11 @@ using std::ios_base;
 /* we required a txt file to perform file operations on */
 Fstream::Fstream(const std::string & txtFile):
 	ifstream(txtFile),
-	txtFile{txtFile} {}
+	txtFile{txtFile} {
+	/* spaces are allowed in the map. Also note this means
+	we no longer skip newlines */
+	ifstream >> noskipws;
+}
 
 Fstream::~Fstream() {}
 
@@ -33,10 +38,10 @@ int Fstream::firstLineLength(void) {
 //counts the number of rows in a txt file by occurences of '\n'
 int Fstream::numLines(void) {
 	ifstream.seekg(0); //iterator to the beginning of the filestream
-	return count(
+	return static_cast <int> (count ( //the static cast is just to silence warnings
 		istreambuf_iterator <char>(ifstream), 
 		istreambuf_iterator <char>(), //empty brackets means search until EOF
-		'\n') + 1; //add 1 because our txt file's last line doesn't contain '\n'
+		'\n') + 1); //add 1 because our txt file's last line doesn't contain '\n'
 }
 
 /* Reads a rectangular section of the file with dimensions based on the 
@@ -56,8 +61,17 @@ std::vector <std::vector <char>> Fstream::readRectContent(void) {
 		for (int j = 0; j < charsToRead; j++) {
 			char toRead;
 			ifstream >> toRead;
+
+			/* Since we don't skip whitespace, when we encounter a newline, read
+			in the character as normal but do nothing with it. Then set the loop to
+			iterate an additional time to read in the "real" character */
+			if (toRead == '\n') {
+				j -= 1;
+				continue;
+			}
 			line.insert(line.end(), toRead);
 		}
+
 		content.emplace_back(line);
 	}
 
