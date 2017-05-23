@@ -11,6 +11,9 @@
 #include "Coordinate.h"
 #include "Display.h"
 
+//to delete
+//#include "Debug.h"
+
 using std::make_unique;
 using std::vector;
 using std::move;
@@ -30,12 +33,12 @@ Map::Map(const std::string & mapTxtFile, Display * const display):
 
 Map::~Map() {}
 
-// updates the visible area based on the players position of visionOrigin
+// updates the visible area based on the players position of playerOrigin
 void Map::updateVisibleArea(void) {
-	int fromChar = mapImpl->visionOrigin.x - mapImpl->visibleDistanceX;
-	int toChar = mapImpl->visionOrigin.x + mapImpl->visibleDistanceX;
-	int startLine = mapImpl->visionOrigin.y - mapImpl->visibleDistanceY;
-	int endLine = mapImpl->visionOrigin.y + mapImpl->visibleDistanceY;
+	int fromChar = mapImpl->playerOrigin.x - mapImpl->visibleDistanceX;
+	int toChar = mapImpl->playerOrigin.x + mapImpl->visibleDistanceX;
+	int startLine = mapImpl->playerOrigin.y - mapImpl->visibleDistanceY;
+	int endLine = mapImpl->playerOrigin.y + mapImpl->visibleDistanceY;
 
 	if (fromChar < 0) fromChar = 0;
 	if (toChar > mapImpl->width) toChar = mapImpl->width;
@@ -60,30 +63,39 @@ void Map::updateVisibleArea(void) {
 		visibleLine.reserve(charsToRead);
 
 		for (int j = fromChar; j < (fromChar + charsToRead); j++) {
-			visibleLine.insert(visibleLine.end(), mapImpl->map[i][j]);
+			// If we are at the tile the player is at, don't draw the map tile, instead draw the player tile
+			if (i == mapImpl->playerOrigin.y && j == mapImpl->playerOrigin.x)
+				visibleLine.insert(visibleLine.end(), '+');
+			// Otherwise, draw the map tile
+			else visibleLine.insert(visibleLine.end(), mapImpl->map[i][j]);
 		}
 
 		mapImpl->visibleArea.emplace_back(visibleLine);
 	}
 
 	notifyVisibleArea();
-	//printVisibleArea();
 }
 
 /* notifies the display of a change in the map's visible area so
 the display knows how to redraw the screen */
 void Map::notifyVisibleArea(void) {
-	mapImpl->display->refreshMap(mapImpl->visibleArea);
+	mapImpl->display->redrawScreen(mapImpl->visibleArea);
 }
 
 /* Adjusts the visible area of
 the map after a player movement */
 void Map::addressTileChange(
+	//todo create vector of changes that newTiles get updated to that differ from the map
 	const Coordinate & tile,
 	const char newDesign) {
+	const char playerTile = '+';
 
-	mapImpl->visionOrigin.x = tile.x;
-	mapImpl->visionOrigin.y = tile.y;
+	/* If the player's tile is being updated, the player's position must
+	have moved. */
+	if (newDesign == playerTile) {
+		mapImpl->playerOrigin.x = tile.x;
+		mapImpl->playerOrigin.y = tile.y;
+	}
 
 	updateVisibleArea();
 }

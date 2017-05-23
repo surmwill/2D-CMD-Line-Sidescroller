@@ -2,6 +2,7 @@
 #include "Iostream.h"
 #include "DisplayImpl.h"
 #include "Coordinate.h"
+#include <utility>
 
 //#define NOMINMAX
 //#define WIN32_LEAN_AND_MEAN
@@ -10,9 +11,13 @@
 using std::make_unique;
 using std::vector;
 using std::move;
+using std::make_pair;
 
 //to delete
 #include "Iostream.h"
+#include "Debug.h"
+#include <string>
+using std::to_string;
 
 /* Intializes the console screen by setting its dimensions and 
 hiding the flashing cursor */
@@ -58,8 +63,8 @@ void Display::setConsoleDimensions(void) {
 void Display::addressTileChange(const Coordinate & tile, const char newDesign) {
 	COORD cursor{ tile.x, tile.y };
 
-	writeConsole(newDesign, 1, cursor);
-	displayImpl->prevDisplay[tile.y][tile.x] = newDesign;
+	//writeConsole(newDesign, 1, cursor);
+	//displayImpl->prevDisplay[tile.y][tile.x] = newDesign;
 }
 
 /* shorthand for FillConsoleOutput since displayImpl->hOut
@@ -88,8 +93,8 @@ void Display::updateCursorPos(const int numWrites, COORD & cursor) {
 	cursor.X = (cursor.X + numWrites) - (rowsToAdd * displayImpl->consoleWidth);
 }
 
-/* Updates the portion of the map we are displaying */
-void Display::refreshMap(const vector <vector <char>> & newTiles) {
+/* Updates the portion of the map we are displaying */ //maybe rename to refresh screen
+void Display::redrawScreen(vector <vector <char>> & newTiles) {
 	DWORD numWrites = 0;
 	COORD cursor{ 0, 0 };
 
@@ -132,7 +137,8 @@ void Display::refreshMap(const vector <vector <char>> & newTiles) {
 			writeConsole(toWrite, numWrites, cursor);
 
 			// resets toWrite and numWrites to their default values
-			adjustWriteProperties(0, '\t');
+			//adjustWriteProperties(0, '\t');
+			numWrites = 0;
 
 			//Since these are the final rows in the console, there is nothing left to print after
 			break; 
@@ -203,39 +209,4 @@ void Display::refreshMap(const vector <vector <char>> & newTiles) {
 	displayImpl->prevDisplay = move(prevDraw);
 }
 
-/* Redraws the entire screen. This is called whenever the 
-player moves to redraw the section of the map we can see. 
-From Cameron's stackoverflow answer: http://stackoverflow.com/questions/34842526/update-console-without-flickering-c/34843181 */
-void Display::refreshScreen(void) {
-	/* Contains information about the console window such
-	as width and height */
-	COORD topLeft = { 0, 0 };
-
-	/* cout uses a buffer to batch writes to the underlying console. We need 
-	to flush that to the console because we're circumventing std::cout entirely;
-	after we clear the console, we don't want stale buffered text to be randomly 
-	written out */
-	cout.flush();
-
-	/* Retrieves information about the specified console screen buffer.
-	This includes the width and height */
-	if (!GetConsoleScreenBufferInfo(displayImpl->hOut, &displayImpl->csbi)) return;
-
-	// The number of character cells to which a character should be written
-	DWORD length = displayImpl->csbi.dwSize.X * displayImpl->csbi.dwSize.Y;
-	
-	// The number of characters actually written
-	DWORD written;
-	
-	// Flood fill the console with spaces to clear it
-	FillConsoleOutputCharacter(displayImpl->hOut, TEXT('a'), length, topLeft, &written);
-	
-	/* Reset the attributes of every character to the default. 
-	This clears all background colour formatting, if any */
-	FillConsoleOutputAttribute(displayImpl->hOut, displayImpl->csbi.wAttributes, length, topLeft, &written);
-	
-	/* Move the cursor back to the top left for the next 
-	sequence of writes */
-	SetConsoleCursorPosition(displayImpl->hOut, topLeft);
-}
 

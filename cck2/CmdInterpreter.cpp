@@ -28,7 +28,7 @@ void CmdInterpreter::processInput(void) {
 	string command;
 
 	while (true) {
-		const int buffer = 60;
+		const int buffer = 50;
 
 		if (currentMode == menuMode) {
 			*input >> command;

@@ -26,9 +26,8 @@ class Display final : public Observer {
 public:
 	Display();
 	~Display();
-	void refreshScreen(void);
-	void refreshMap(
-		const std::vector <std::vector <char>> & newTiles
+	void redrawScreen(
+		std::vector <std::vector <char>> & newTiles
 	);
 };
 

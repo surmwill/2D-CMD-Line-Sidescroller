@@ -12,17 +12,9 @@ using std::make_unique;
 /* Adds the map as one of the player's observers. When
 the player moves, we update the portion of the map the player
 can see. */
-Player::Player(Observer * const map, Observer * const display):
+Player::Player(Observer * const map):
 	playerImpl(make_unique <PlayerImpl> ()) {
 	addObserver(map);
-	addObserver(display);
-
-	/* immediately update the display with the player's 
-	inital position */
-	notifyTileChange(
-		playerImpl->position,
-		playerImpl->playerTile
-	);
 }
 
 Player::~Player() {

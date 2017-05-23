@@ -5,6 +5,7 @@
 #include <memory>
 #include "Observer.h"
 #include <ostream>
+#include <fstream>
 
 struct MapImpl;
 struct Coordinate;

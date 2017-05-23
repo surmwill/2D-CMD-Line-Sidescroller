@@ -140,6 +140,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="CmdInterpreter.cpp" />
+    <ClCompile Include="Debug.cpp" />
     <ClCompile Include="Display.cpp" />
     <ClCompile Include="Fstream.cpp" />
     <ClCompile Include="Level.cpp" />
@@ -154,6 +155,7 @@
   <ItemGroup>
     <ClInclude Include="CmdInterpreter.h" />
     <ClInclude Include="Coordinate.h" />
+    <ClInclude Include="Debug.h" />
     <ClInclude Include="Display.h" />
     <ClInclude Include="DisplayImpl.h" />
     <ClInclude Include="Fstream.h" />
