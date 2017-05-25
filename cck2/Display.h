@@ -22,6 +22,7 @@ class Display final : public Observer {
 	void writeConsole(const WCHAR toWrite, const DWORD length, COORD & cursor);
 	void setConsoleDimensions(void);
 	void disableConsoleCursor(void);
+	void drawMenu(COORD & cursor);
 
 public:
 	Display();

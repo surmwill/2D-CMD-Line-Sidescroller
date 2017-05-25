@@ -110,7 +110,7 @@ void Display::redrawScreen(vector <vector <char>> & newTiles) {
 	/* this will be updated as newTiles get written to the screen, prevDisplay
 	will eventually be set equal to this */
 	vector <vector <char>> prevDraw(
-		displayImpl->consoleHeight, 
+		displayImpl->mapHeight, 
 		vector <char>(displayImpl->consoleWidth, ' '));
 
 	/* Go through the previous visible area and redraw only the
@@ -205,8 +205,19 @@ void Display::redrawScreen(vector <vector <char>> & newTiles) {
 	write is needed to print the final char(s) left in the buffer */
 	writeConsole(toWrite, numWrites, cursor);
 
+	drawMenu(cursor);
+
 	// Our previous display becomes what was just drawn
 	displayImpl->prevDisplay = move(prevDraw);
 }
 
+void Display::drawMenu(COORD & cursor) {
+	const int numRows =
+		displayImpl->consoleHeight - displayImpl->mapHeight;
+
+	const int numWrites = numRows * displayImpl->consoleWidth;
+	const char toWrite = '*';
+
+	writeConsole(toWrite, numWrites, cursor);
+}
 
