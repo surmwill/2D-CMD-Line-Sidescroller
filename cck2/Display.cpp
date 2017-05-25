@@ -61,7 +61,7 @@ void Display::setConsoleDimensions(void) {
 
 /* Updates and displays a singular tile on the visible map. */
 void Display::addressTileChange(const Coordinate & tile, const char newDesign) {
-	COORD cursor{ tile.x, tile.y };
+	//COORD cursor{ tile.x, tile.y };
 
 	//writeConsole(newDesign, 1, cursor);
 	//displayImpl->prevDisplay[tile.y][tile.x] = newDesign;
