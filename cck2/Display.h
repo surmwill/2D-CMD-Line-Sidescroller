@@ -18,11 +18,14 @@ class Display final : public Observer {
 		const Coordinate & tile,
 		const char newDesign) override;
 
-	void updateCursorPos(const int numWrites, COORD & cursor);
-	void writeConsole(const WCHAR toWrite, const DWORD length, COORD & cursor);
+	void updateCursorPos(const int numWrites);
+	void writeConsole(const WCHAR toWrite, const DWORD length);
 	void setConsoleDimensions(void);
 	void disableConsoleCursor(void);
-	void drawMenu(COORD & cursor);
+	void drawMenu(void);
+	void menuSetup(void);
+	void nextDrawPosition(const int row, const int col);
+	void adjustTextProperties(void);
 
 public:
 	Display();

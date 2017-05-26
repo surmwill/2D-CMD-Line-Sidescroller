@@ -21,11 +21,11 @@ struct DisplayImpl {
 
 	const HANDLE hOut;
 	CONSOLE_SCREEN_BUFFER_INFO csbi;
-	COORD cursor{ 0, 0 };
+	COORD cursor{ 0, 0 }; //Where the next character is to be outputted on the screen
 
 	const SHORT consoleWidth = 81; //chars across (81)
-	const SHORT consoleHeight = 29; //number of lines (25)
-	const SHORT mapHeight = 25; // Lines 26 - 29 are reserved for dialogue / menu
+	const SHORT consoleHeight = 31; //number of lines (25)
+	const SHORT mapHeight = 25; // Lines 26 - 31 are reserved for dialogue / menu
 
 	/* since most of the map will be spaces, if we start with a screen
 	full of spaces and only redraw the non spaces we eliminate some redrawing */

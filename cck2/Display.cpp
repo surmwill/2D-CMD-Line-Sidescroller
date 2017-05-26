@@ -3,6 +3,7 @@
 #include "DisplayImpl.h"
 #include "Coordinate.h"
 #include <utility>
+#include <cwchar>
 
 //#define NOMINMAX
 //#define WIN32_LEAN_AND_MEAN
@@ -12,6 +13,7 @@ using std::make_unique;
 using std::vector;
 using std::move;
 using std::make_pair;
+using std::wcscpy;
 
 //to delete
 #include "Iostream.h"
@@ -22,8 +24,10 @@ using std::to_string;
 /* Intializes the console screen by setting its dimensions and 
 hiding the flashing cursor */
 Display::Display(): displayImpl(make_unique <DisplayImpl> ()) {
+	adjustTextProperties();
 	setConsoleDimensions();
 	disableConsoleCursor();
+	menuSetup();
 }
 
 Display::~Display() {}
@@ -59,6 +63,33 @@ void Display::setConsoleDimensions(void) {
 
 }
 
+void Display::adjustTextProperties(void) {
+	CONSOLE_FONT_INFOEX cfi;
+
+	//size of the structure
+	cfi.cbSize = sizeof(cfi);
+
+	//index of the front of the console's font table
+	cfi.nFont = 0;
+
+	//set to 24pt font
+	cfi.dwFontSize.X = 0; 
+	cfi.dwFontSize.Y = 24;
+
+	//we are using the default font
+	cfi.FontFamily = FF_DONTCARE;
+
+	//no bold
+	cfi.FontWeight = FW_NORMAL;
+
+	/* setting the font type to "Consolas". Any other's screw 
+	with the printing */
+	wcscpy(cfi.FaceName, L"Consolas");
+
+	//applying the font changes
+	SetCurrentConsoleFontEx(displayImpl->hOut, FALSE, &cfi);
+}
+
 /* Updates and displays a singular tile on the visible map. */
 void Display::addressTileChange(const Coordinate & tile, const char newDesign) {
 	//COORD cursor{ tile.x, tile.y };
@@ -70,33 +101,36 @@ void Display::addressTileChange(const Coordinate & tile, const char newDesign) {
 /* shorthand for FillConsoleOutput since displayImpl->hOut
 and &charsWritten are always the same. Also updates the cursor to
 the next open position in the buffer */
-void Display::writeConsole(const WCHAR toWrite, const DWORD length, COORD & cursor) {
+void Display::writeConsole(const WCHAR toWrite, const DWORD length) {
 	DWORD charsWritten;
 
 	FillConsoleOutputCharacter(
 		displayImpl->hOut,
 		toWrite,
 		length,
-		cursor,
+		displayImpl->cursor,
 		&charsWritten
 	);
 
-	updateCursorPos(length, cursor);
+	updateCursorPos(length);
 }
 
 /* updates the cursor position based on how many characters we
 have just written to the screen */
-void Display::updateCursorPos(const int numWrites, COORD & cursor) {
-	const int rowsToAdd = (cursor.X + numWrites) / displayImpl->consoleWidth;
+void Display::updateCursorPos(const int numWrites) {
+	const int rowsToAdd = (displayImpl->cursor.X + numWrites) / displayImpl->consoleWidth;
 
-	cursor.Y += rowsToAdd;
-	cursor.X = (cursor.X + numWrites) - (rowsToAdd * displayImpl->consoleWidth);
+	displayImpl->cursor.Y += rowsToAdd;
+	displayImpl->cursor.X = 
+		(displayImpl->cursor.X + numWrites) - (rowsToAdd * displayImpl->consoleWidth);
 }
 
 /* Updates the portion of the map we are displaying */ //maybe rename to refresh screen
 void Display::redrawScreen(vector <vector <char>> & newTiles) {
 	DWORD numWrites = 0;
-	COORD cursor{ 0, 0 };
+
+	//We begin redrawing the screen from the top left
+	nextDrawPosition(0, 0);
 
 	//inital value that will NEVER appear on a map. Only ' ' will be used for whitespace
 	WCHAR toWrite = '\t';
@@ -127,14 +161,14 @@ void Display::redrawScreen(vector <vector <char>> & newTiles) {
 			if (toWrite == ' ') numWrites += numSpaces;
 			else { 
 				//otherwise print what's in the buffer
-				writeConsole(toWrite, numWrites, cursor);
+				writeConsole(toWrite, numWrites);
 
 				// and add the correct number of spaces to printed to the buffer
 				adjustWriteProperties(numSpaces, ' ');
 			}
 
 			//print the spaces
-			writeConsole(toWrite, numWrites, cursor);
+			writeConsole(toWrite, numWrites);
 
 			// resets toWrite and numWrites to their default values
 			//adjustWriteProperties(0, '\t');
@@ -152,11 +186,11 @@ void Display::redrawScreen(vector <vector <char>> & newTiles) {
 
 				if (toWrite == ' ') numWrites += numSpaces; 
 				else { 
-					writeConsole(toWrite, numWrites, cursor);
+					writeConsole(toWrite, numWrites);
 					adjustWriteProperties(numSpaces, ' ');
 				}
 
-				writeConsole(toWrite, numWrites, cursor);
+				writeConsole(toWrite, numWrites);
 				adjustWriteProperties(0, '\t');
 
 				//continue on to printing the next row
@@ -178,7 +212,7 @@ void Display::redrawScreen(vector <vector <char>> & newTiles) {
 				if (newTiles[i][j] == toWrite) numWrites++; //note that numWrites starts at 0
 				else {
 					/* Draws the updated tile(s) and adjusts the cursor to the next drawing poistion */
-					writeConsole(toWrite, numWrites, cursor);
+					writeConsole(toWrite, numWrites);
 
 					/* Sets the buffer to the next tile design to be printed. Since we already 
 					encountered 1 of the tile, it follos that we print at least 1 */
@@ -189,13 +223,13 @@ void Display::redrawScreen(vector <vector <char>> & newTiles) {
 				/* If there are tile(s) to be printed in the buffer. Print them first
 				as we will be updating the cursor to jump over the un-changed tile */
 				if (numWrites != 0) {
-					writeConsole(toWrite, numWrites, cursor);
+					writeConsole(toWrite, numWrites);
 					adjustWriteProperties(0, '\t');
 				}
 
 				/* moves the cursor one forward, skipping the tile. If the tile
 				is the same there as the last draw, there is no need to redraw it */
-				updateCursorPos(1, cursor);
+				updateCursorPos(1);
 			} 
 		} 
 
@@ -203,21 +237,42 @@ void Display::redrawScreen(vector <vector <char>> & newTiles) {
 
 	/* The screen's output is always one step behind the buffer. Thus, one final
 	write is needed to print the final char(s) left in the buffer */
-	writeConsole(toWrite, numWrites, cursor);
+	writeConsole(toWrite, numWrites);
 
-	drawMenu(cursor);
+	//drawMenu();
 
 	// Our previous display becomes what was just drawn
 	displayImpl->prevDisplay = move(prevDraw);
 }
 
-void Display::drawMenu(COORD & cursor) {
+void Display::drawMenu(void) {
+	//dont want to redraw if same
+	//have cmd interpreter notify display of menu
+	//print out cursor adn manually set the coords because ideally we want this seperate from redrawScreen
+	const int menuStartRow = 26;
+	nextDrawPosition(menuStartRow, 0);
+
 	const int numRows =
 		displayImpl->consoleHeight - displayImpl->mapHeight;
 
 	const int numWrites = numRows * displayImpl->consoleWidth;
 	const char toWrite = '*';
 
-	writeConsole(toWrite, numWrites, cursor);
+	writeConsole(toWrite, numWrites);
 }
 
+void Display::menuSetup(void) {
+	/* start drawing the line after the bottom of the map. The map is in charge
+	of updating it's own section of the display */
+	nextDrawPosition(displayImpl->mapHeight, 0);
+
+	/* these will never be redrawn */
+	writeConsole(' ', displayImpl->consoleWidth); //draw a line of blank spaces for clarity
+	writeConsole('~', displayImpl->consoleWidth); //draw a line of '~' to section off the menu
+}
+
+/* Sets the cursor position which corresponds to the next place a character is drawn */
+void Display::nextDrawPosition(const int row, const int col) {
+	displayImpl->cursor.Y = row;
+	displayImpl->cursor.X = col;
+}
