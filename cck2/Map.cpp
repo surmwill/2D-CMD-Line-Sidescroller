@@ -79,7 +79,7 @@ void Map::updateVisibleArea(void) {
 /* notifies the display of a change in the map's visible area so
 the display knows how to redraw the screen */
 void Map::notifyVisibleArea(void) {
-	mapImpl->display->redrawScreen(mapImpl->visibleArea);
+	mapImpl->display->drawMap(mapImpl->visibleArea);
 }
 
 /* Adjusts the visible area of
