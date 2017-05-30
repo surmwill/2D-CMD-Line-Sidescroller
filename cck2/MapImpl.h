@@ -30,8 +30,6 @@ struct MapImpl final {
 
 	/* the Map's dimensional properties */
 	const int width, height; 
-	const int minXBoundary = 0;
-	const int minYBoundary = 0;
 
 	/* The amount of tiles we can see ahead from our current position (10, 10) */
 	const int visibleDistanceX = 40, visibleDistanceY = 12; 

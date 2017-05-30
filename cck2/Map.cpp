@@ -79,7 +79,7 @@ void Map::updateVisibleArea(void) {
 /* notifies the display of a change in the map's visible area so
 the display knows how to redraw the screen */
 void Map::notifyVisibleArea(void) {
-	mapImpl->display->redrawScreen(mapImpl->visibleArea);
+	mapImpl->display->drawMap(mapImpl->visibleArea);
 }
 
 /* Adjusts the visible area of
@@ -95,6 +95,15 @@ void Map::addressTileChange(
 	if (newDesign == playerTile) {
 		mapImpl->playerOrigin.x = tile.x;
 		mapImpl->playerOrigin.y = tile.y;
+
+		/* We aren't allowed to leave the map's boundaries */
+		if (mapImpl->playerOrigin.x < 0) mapImpl->playerOrigin.x = 0;
+		else if (mapImpl->playerOrigin.x > mapImpl->width) 
+			mapImpl->playerOrigin.x = mapImpl->width;
+
+		if (mapImpl->playerOrigin.y < 0) mapImpl->playerOrigin.y = 0;
+		else if (mapImpl->playerOrigin.y > mapImpl->height) 
+			mapImpl->playerOrigin.y = mapImpl->height;
 	}
 
 	updateVisibleArea();
