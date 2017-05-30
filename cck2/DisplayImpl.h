@@ -30,6 +30,8 @@ struct DisplayImpl {
 	const SHORT uiStarts = 25; // 4 Lines: (25 - 28) are reserved for diaplying the u.i
 	const SHORT dialogueStarts = 29; // 4 Lines (29 - 32) are reserved for printing dialogue
 
+	LPCWSTR title = L"CCK2"; //title of the game - to be displayed on the console window
+
 	/* a character which should never show up on the map. The buffer is always 1 character behind
 	where we are in the for loop. This is the buffer's initial character that it's fed that it knows not
 	to print */

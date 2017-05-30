@@ -26,6 +26,7 @@ using std::to_string;
 hiding the flashing cursor */
 Display::Display(): displayImpl(make_unique <DisplayImpl> ()) {
 	adjustTextProperties();
+	setConsoleProperties();
 	setConsoleDimensions();
 	disableConsoleCursor();
 	drawUI();
@@ -40,6 +41,35 @@ void Display::disableConsoleCursor(void) {
 	GetConsoleCursorInfo(displayImpl->hOut, &cci);
 	cci.bVisible = FALSE;
 	SetConsoleCursorInfo(displayImpl->hOut, &cci);
+}
+
+/* Sets the console's x and y position to the top left of the screen.
+Also disables resizing the console, and going fullscreen */
+void Display::setConsoleProperties(void) {
+	HWND hConsole;
+	MENUITEMINFO mii;
+	const int updateTime = 10;
+	const int dontCareDim = 0;
+
+	/* Sets the title and allows time for the console to update */
+	SetConsoleTitle(displayImpl->title);
+	Sleep(updateTime);
+
+	// Gets a handle to the console window
+	hConsole = FindWindow(NULL, displayImpl->title);
+
+	/* Sets the console to appear in the top left (0, 0) of the screen. The
+	screen will be resized later so the dimensions don't matter */
+	MoveWindow(hConsole, 0, 0, dontCareDim, dontCareDim, FALSE);
+
+	// Gets a handle to the menu in order to adjust console options
+	HMENU hMenu = GetSystemMenu(hConsole, FALSE);
+	
+	DeleteMenu(hMenu, 1, MF_BYPOSITION); // disable 'Move'
+	DeleteMenu(hMenu, 1, MF_BYPOSITION); // disable 'Size'
+
+	DeleteMenu(hMenu, 2, MF_BYPOSITION); // disable 'Maximize'
+	//DeleteMenu(hMenu, 3, MF_BYPOSITION); // disable 'Close or X'
 }
 
 /* Adjusts the console screen size and buffer size according to displayImpl::consoleWidth
@@ -62,9 +92,9 @@ void Display::setConsoleDimensions(void) {
 	// Sets the buffer size and console size
 	SetConsoleScreenBufferSize(displayImpl->hOut, bufferSize);
 	SetConsoleWindowInfo(displayImpl->hOut, TRUE, &consoleBounds);
-
 }
 
+/* Adjusts the text size and font */
 void Display::adjustTextProperties(void) {
 	CONSOLE_FONT_INFOEX cfi;
 
@@ -84,7 +114,7 @@ void Display::adjustTextProperties(void) {
 	//no bold
 	cfi.FontWeight = FW_NORMAL;
 
-	/* setting the font type to "Consolas". Any other's screw 
+	/* setting the font type to "Consolas". Any other font screws 
 	with the printing */
 	wcscpy_s(cfi.FaceName, L"Consolas");
 
@@ -111,9 +141,13 @@ void Display::writeConsole(const WCHAR toWrite, const DWORD length) {
 
 /* Draws a string in the console, starting wherever the cursor
 is located */
-void Display::writeStringToConsole(const string strToWrite, const int speed) {
+void Display::writeStringToConsole(const string strToWrite, bool slowType) {
 	char toWrite = displayImpl->tokenTile;
 	int numWrites = 0;
+
+	/* the amount of time we wait (ms) between printing batches of characters. Since we don't
+	expect many repeated adjacent characters in dialogue, it should display smoothly */
+	const DWORD slowTypeSpeed = 10;
 
 	/* The same algorithim as redrawScreen. Store as many repeats of the
 	same character in the buffer as possible and write them all at once when
@@ -124,6 +158,10 @@ void Display::writeStringToConsole(const string strToWrite, const int speed) {
 		if (c == toWrite) numWrites++;
 		else {
 			writeConsole(toWrite, numWrites);
+
+			// pause for a brief moment between outputs for a "typewriter effect"
+			if (slowType) Sleep(slowTypeSpeed); 
+
 			toWrite = c;
 			numWrites = 1;
 		}
@@ -271,8 +309,8 @@ void Display::drawUI(void) {
 	writeConsole(' ', displayImpl->consoleWidth); //draw a line of blank spaces for clarity
 	writeConsole('~', displayImpl->consoleWidth); //draw a line of '~' to section off the menu
 
-
-	const string uiLine = "  (I)nventory | (S)elf | (M)ap | (T)alent | (C)rafting | (R)eligion | (O)ptions  ";
+	//3 spaces on either side to center the u.i
+	const string uiLine = "   (I)nventory | (S)elf | (M)ap | (T)alents | (C)raft | (R)eligion | (O)ptions   ";
 	writeStringToConsole(uiLine);
 
 	writeConsole('~', displayImpl->consoleWidth); //draw a line of blank spaces for clarity
@@ -294,11 +332,11 @@ void Display::drawDialogue(
 	const int line, 
 	const string name, 
 	const string dialogue,
-	const int speed) {
+	bool slowType) {
 	nextDrawPosition(displayImpl->dialogueStarts + line, 0);
 
 	writeStringToConsole(name + ": ");
-	writeStringToConsole(dialogue);
+	writeStringToConsole(dialogue, slowType);
 }
 
 /* Sets the cursor position which corresponds to the next place a character is drawn */
