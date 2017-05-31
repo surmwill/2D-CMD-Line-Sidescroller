@@ -33,8 +33,26 @@ Map::Map(const std::string & mapTxtFile, Display * const display):
 
 Map::~Map() {}
 
+/* Updates where the player (and by extension the vision origin) is on the map. If
+it is not a valid location the player is not moved. Note that newOrigin directly 
+corresponds to the player's position in the PlayerImpl class and thus, by modifying
+newOrigin we are also modfying PlayerImpl::position */
+void Map::updateVisionOrigin(Coordinate & newOrigin) {
+	/* We aren't allowed to leave the map's boundaries */
+	if (newOrigin.x < 0) newOrigin.x = 0;
+	else if (newOrigin.x > mapImpl->width) newOrigin.x = mapImpl->width;
+
+	if (newOrigin.y < 0) newOrigin.y = 0;
+	else if (newOrigin.y > mapImpl->height) newOrigin.y = mapImpl->height;
+
+	/* Update the players location */
+	mapImpl->playerOrigin.x = newOrigin.x;
+	mapImpl->playerOrigin.y = newOrigin.y;
+}
+
 // updates the visible area based on the players position of playerOrigin
-void Map::updateVisibleArea(void) {
+void Map::updateVisibleArea() {
+	/* Calculate the section of the map vector we are to display */
 	int fromChar = mapImpl->playerOrigin.x - mapImpl->visibleDistanceX;
 	int toChar = mapImpl->playerOrigin.x + mapImpl->visibleDistanceX;
 	int startLine = mapImpl->playerOrigin.y - mapImpl->visibleDistanceY;
@@ -73,6 +91,7 @@ void Map::updateVisibleArea(void) {
 		mapImpl->visibleArea.emplace_back(visibleLine);
 	}
 
+	// draws the section of the map
 	notifyVisibleArea();
 }
 
@@ -86,27 +105,16 @@ void Map::notifyVisibleArea(void) {
 the map after a player movement */
 void Map::addressTileChange(
 	//todo create vector of changes that newTiles get updated to that differ from the map
-	const Coordinate & tile,
+	Coordinate & tile,
 	const char newDesign) {
 	const char playerTile = '+';
 
 	/* If the player's tile is being updated, the player's position must
 	have moved. */
 	if (newDesign == playerTile) {
-		mapImpl->playerOrigin.x = tile.x;
-		mapImpl->playerOrigin.y = tile.y;
-
-		/* We aren't allowed to leave the map's boundaries */
-		if (mapImpl->playerOrigin.x < 0) mapImpl->playerOrigin.x = 0;
-		else if (mapImpl->playerOrigin.x > mapImpl->width) 
-			mapImpl->playerOrigin.x = mapImpl->width;
-
-		if (mapImpl->playerOrigin.y < 0) mapImpl->playerOrigin.y = 0;
-		else if (mapImpl->playerOrigin.y > mapImpl->height) 
-			mapImpl->playerOrigin.y = mapImpl->height;
+		updateVisionOrigin(tile);
+		updateVisibleArea();
 	}
-
-	updateVisibleArea();
 }
 
 //prints out the entire map

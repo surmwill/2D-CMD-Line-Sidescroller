@@ -10,7 +10,7 @@ Subject::~Subject() {};
 /* Notifies the map/display (depending on the subject) 
 when a tile changes value. */
 void Subject::notifyTileChange(
-	const Coordinate & tile,
+	Coordinate & tile,
 	const char newDesign) {
 	for (auto &obs : observers) {
 		obs->addressTileChange(tile, newDesign);

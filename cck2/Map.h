@@ -17,13 +17,14 @@ public:
 	~Map();
 	
 	virtual void addressTileChange(
-		const Coordinate & tile,
+		Coordinate & tile,
 		const char newDesign) override;
 
+private:
 	void notifyVisibleArea(void);
 	void updateVisibleArea(void);
+	void updateVisionOrigin(Coordinate & newOrigin);
 
-private:
 	std::unique_ptr<MapImpl> mapImpl;
 	void printVisibleArea(void) const;
 	friend std::ostream & operator<<(std::ostream & out, const Map & map);
