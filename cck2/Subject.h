@@ -7,8 +7,8 @@ struct Coordinate;
 
 class Subject {
 public:
-	void notifyTileChange(
-		Coordinate & tile,
+	bool notifyTileChange(
+		const Coordinate & tile,
 		const char newDesign);
 
 	void notifyMultiTileChanges(

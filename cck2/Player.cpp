@@ -21,42 +21,51 @@ Player::~Player() {
 }
 
 Player & Player::moveLeft(void) {
-	playerImpl->position.x -= 1;
-	notifyTileChange(
-		playerImpl->position, 
-		playerImpl->playerTile
-	);
+	const Coordinate possiblePosition{ 
+		playerImpl->position.x - 1, 
+		playerImpl->position.y };
+
+	if (notifyTileChange(
+		possiblePosition,
+		playerImpl->playerTile)) playerImpl->position = possiblePosition;
 
 	return *this;
 }
 
 Player & Player::moveRight(void) {
-	playerImpl->position.x += 1;
-	notifyTileChange(
-		playerImpl->position,
-		playerImpl->playerTile
-	);
+	const Coordinate possiblePosition{
+		playerImpl->position.x + 1,
+		playerImpl->position.y };
+
+	if (notifyTileChange(
+		possiblePosition,
+		playerImpl->playerTile)) playerImpl->position = possiblePosition;
 
 	return *this;
 }
 
 Player & Player::moveUp(void) {
-	playerImpl->position.y -= 1;
-	notifyTileChange(
-		playerImpl->position,
-		playerImpl->playerTile
-	);
+	const Coordinate possiblePosition{
+		playerImpl->position.x,
+		playerImpl->position.y - 1 };
+
+	if (notifyTileChange(
+		possiblePosition,
+		playerImpl->playerTile)) playerImpl->position = possiblePosition;
 
 	return *this;
 }
 
 Player & Player::moveDown(void) {
-	//we are reading lines further down in the file hence the '+'
-	playerImpl->position.y += 1; 
-	notifyTileChange(
-		playerImpl->position,
+	//we are reading lines further down in the file hence the "y + 1"
+	const Coordinate possiblePosition{
+		playerImpl->position.x,
+		playerImpl->position.y + 1};
+
+	if (notifyTileChange(
+		possiblePosition,
 		playerImpl->playerTile
-	);
+	)) playerImpl->position = possiblePosition;
 
 	return *this;
 }

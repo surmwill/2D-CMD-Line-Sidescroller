@@ -16,14 +16,14 @@ public:
 	Map(const std::string & mapTxtFile, Display * const display);
 	~Map();
 	
-	virtual void addressTileChange(
-		Coordinate & tile,
+	virtual bool addressTileChange(
+		const Coordinate & tile,
 		const char newDesign) override;
 
 private:
 	void notifyVisibleArea(void);
 	void updateVisibleArea(void);
-	void updateVisionOrigin(Coordinate & newOrigin);
+	bool validMove(const Coordinate & newOrigin);
 
 	std::unique_ptr<MapImpl> mapImpl;
 	void printVisibleArea(void) const;
