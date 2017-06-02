@@ -36,18 +36,19 @@ Map::~Map() {}
 /* Updates where the player (and by extension the vision origin) is on the map. If
 it is not a valid location the player is not moved. Note that newOrigin directly 
 corresponds to the player's position in the PlayerImpl class and thus, by modifying
-newOrigin we are also modfying PlayerImpl::position */
-void Map::updateVisionOrigin(Coordinate & newOrigin) {
+newOrigin we are also modfying PlayerImpl::position. Returns true if the player is
+moved */
+bool Map::validMove(const Coordinate & newOrigin) {
 	/* We aren't allowed to leave the map's boundaries */
-	if (newOrigin.x < 0) newOrigin.x = 0;
-	else if (newOrigin.x > mapImpl->width) newOrigin.x = mapImpl->width;
+	if (newOrigin.x < 0 || newOrigin.x > mapImpl->width) return false;
+	else if (newOrigin.y < 0 || newOrigin.y > mapImpl->height) return false;
 
-	if (newOrigin.y < 0) newOrigin.y = 0;
-	else if (newOrigin.y > mapImpl->height) newOrigin.y = mapImpl->height;
+	/* We aren't allowed to move through walls */
+	if (mapImpl->map[newOrigin.y][newOrigin.x] == mapImpl->wallTile) return false;
 
-	/* Update the players location */
-	mapImpl->playerOrigin.x = newOrigin.x;
-	mapImpl->playerOrigin.y = newOrigin.y;
+	Debug::write(std::to_string(mapImpl->playerOrigin.x) + " " + std::to_string(mapImpl->playerOrigin.y));
+
+	return true;
 }
 
 // updates the visible area based on the players position of playerOrigin
@@ -83,7 +84,7 @@ void Map::updateVisibleArea() {
 		for (int j = fromChar; j < (fromChar + charsToRead); j++) {
 			// If we are at the tile the player is at, don't draw the map tile, instead draw the player tile
 			if (i == mapImpl->playerOrigin.y && j == mapImpl->playerOrigin.x)
-				visibleLine.insert(visibleLine.end(), '+');
+				visibleLine.insert(visibleLine.end(), mapImpl->playerTile);
 			// Otherwise, draw the map tile
 			else visibleLine.insert(visibleLine.end(), mapImpl->map[i][j]);
 		}
@@ -103,17 +104,25 @@ void Map::notifyVisibleArea(void) {
 
 /* Adjusts the visible area of
 the map after a player movement */
-void Map::addressTileChange(
+bool Map::addressTileChange(
 	//todo create vector of changes that newTiles get updated to that differ from the map
-	Coordinate & tile,
+	const Coordinate & tileCoord,
 	const char newDesign) {
-	const char playerTile = '+';
 
 	/* If the player's tile is being updated, the player's position must
 	have moved. */
-	if (newDesign == playerTile) {
-		updateVisionOrigin(tile);
-		updateVisibleArea();
+	if (newDesign == mapImpl->playerTile) {
+		/* the map is always once step behind in movement with respect to the player. If
+		we have a valid move (not leaving the map etc...) update where the player is on the map */
+		if (validMove(tileCoord)) {
+			mapImpl->playerOrigin.x = tileCoord.x;
+			mapImpl->playerOrigin.y = tileCoord.y;
+			updateVisibleArea();
+
+			// We have succesfully changed a tile on the map
+			return true;
+		}
+		else return false; // We have not succesfully changed a tile on the map
 	}
 }
 

@@ -38,5 +38,8 @@ struct MapImpl final {
 	vector <vector <char>> visibleArea;
 	vector <vector <char>> map;
 
+	const char playerTile = '+';
+	const char wallTile = '#';
+
 	Display * const display;
 };

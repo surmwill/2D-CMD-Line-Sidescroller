@@ -8,13 +8,16 @@ using std::pair;
 Subject::~Subject() {};
 
 /* Notifies the map/display (depending on the subject) 
-when a tile changes value. */
-void Subject::notifyTileChange(
-	Coordinate & tile,
+when a tile changes value. If the tile cannot be changed
+we return false */
+bool Subject::notifyTileChange(
+	const Coordinate & tile,
 	const char newDesign) {
 	for (auto &obs : observers) {
-		obs->addressTileChange(tile, newDesign);
+		return obs->addressTileChange(tile, newDesign);
 	}
+
+	return true;
 }
 
 /* Updates the tiles at tileCoords of a change in design */
