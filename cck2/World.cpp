@@ -13,24 +13,28 @@ using std::make_unique;
 
 class Observer;
 
-/* Intializes the player and level (level by extension,
-intializes the map) */
+/* Main constructor */
 World::World() : worldImpl(make_unique <WorldImpl> ()) {
-	Observer * map = nullptr;
+	/* Create a new map object which has yet to load a level. The
+	display is the map's observer */
+	Observer * map = new Map(worldImpl->display.get());
 
-	/* We want the Map to call a specific Display function to redraw the 
-	entire screen. Since we don't want to write a Observer function geared
-	towards only 1 type of observer (the display) and not other observers (the map)
-	we cast the display from an Observer to it's actual class, Display */
-	worldImpl->level = make_unique <LevelOne>(
-		&map, dynamic_cast <Display *> (worldImpl->display.get()));
+	/* Every Level subclass has access to the map object. This is 
+	used to cleanly swap levels. Note noDelete prevents deletion 
+	of map pointer through the shared_ptr reset method so we can still pass
+	the map as one of the player's observers */
+	auto noDelete = [](Observer*) {};
+	Level::map.reset(dynamic_cast <Map *> (map), noDelete);
 
+	/* Start at level one */
+	worldImpl->level = make_unique <LevelOne>();
+
+	// Spawn the player and pass the map as one of the player's observers
 	worldImpl->player = make_unique <Player>(map, worldImpl->level->getPlayerStart());
 }
 
 
-World::~World() {
-}
+World::~World() {}
 
 World & World::movePlayer(const int direction) {
 	switch (direction) {
