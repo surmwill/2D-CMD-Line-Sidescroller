@@ -22,8 +22,11 @@ using std::string;
 
 /* We require a txt file with desired map design to read and the display
 which we call directly to redraw the screen */
-Map::Map(const std::string & mapTxtFile, Display * const display):
-	mapImpl(make_unique<MapImpl>(mapTxtFile, display)) {
+Map::Map(
+	const std::string & mapTxtFile, 
+	Display * const display,
+	const Coordinate playerStart):
+	mapImpl(make_unique<MapImpl>(mapTxtFile, display, playerStart)) {
 	/* reads in the contents of the entire (rectangular) map */
 	mapImpl->map = std::move(mapImpl->fstream.readRectContent());
 
@@ -46,8 +49,7 @@ bool Map::validMove(const Coordinate & newOrigin) {
 	/* We aren't allowed to move through walls */
 	if (mapImpl->map[newOrigin.y][newOrigin.x] == mapImpl->wallTile) return false;
 
-	Debug::write(std::to_string(mapImpl->playerOrigin.x) + " " + std::to_string(mapImpl->playerOrigin.y));
-
+	/* Otherwise we have a valid move */
 	return true;
 }
 

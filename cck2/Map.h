@@ -13,7 +13,11 @@ class Display;
 
 class Map : public Observer {
 public:
-	Map(const std::string & mapTxtFile, Display * const display);
+	Map(
+		const std::string & mapTxtFile, 
+		Display * const display,
+		const Coordinate playerStart);
+
 	~Map();
 	
 	virtual bool addressTileChange(

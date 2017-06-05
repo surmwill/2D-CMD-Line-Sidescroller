@@ -3,6 +3,7 @@
 #include "Coordinate.h"
 
 struct PlayerImpl {
-	Coordinate position{ 0 , 0 };
+	PlayerImpl(const Coordinate playerStart) : position(playerStart) {};
+	Coordinate position;
 	const char playerTile = '+';
 };
