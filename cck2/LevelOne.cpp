@@ -4,16 +4,20 @@
 
 using std::make_shared;
 
-LevelOne::LevelOne(Observer ** const map, Display * const display) {
-	auto noDelete = [](Observer*) {};
-	*map = new Map{ "LevelOne\\LevelOne.txt", display };
+LevelOne::LevelOne() : Level{ Coordinate{1,1} } {
+	// spawns the player on tile (1, 1)
+	map->placePlayer(playerStart);
 
-	/* ensures we don't delete and replace the map pointer
-	so we can still pass the map as one of the player's observers */
-	Level::map.reset(*map, noDelete);
+	/* reads in the level one's map to a vector, stores the 
+	map's dimensions, and draws the map */
+	map->readLevel("LevelOne\\LevelOne.txt");
 }
 
 
-LevelOne::~LevelOne()
-{
+LevelOne::~LevelOne() {}
+
+/* Returns our starting location for level one. This is 
+passed onto the player class */
+Coordinate LevelOne::getPlayerStart(void) {
+	return Level::playerStart;
 }

@@ -299,13 +299,12 @@ void Display::drawMap(vector <vector <char>> & newTiles) {
 	displayImpl->prevDisplay = move(prevDraw);
 }
 
-/* Draws our U.I is not redrawn unless a menu screen is pulled up*/
+/* Draws our U.I. The U.I. is not redrawn unless a menu screen is pulled up */
 void Display::drawUI(void) {
 	/* start drawing the line after the bottom of the map. The map is in charge
 	of updating it's own section of the display */
 	nextDrawPosition(displayImpl->uiStarts, 0);
 
-	/* these will never be redrawn */
 	writeConsole(' ', displayImpl->consoleWidth); //draw a line of blank spaces for clarity
 	writeConsole('~', displayImpl->consoleWidth); //draw a line of '~' to section off the menu
 

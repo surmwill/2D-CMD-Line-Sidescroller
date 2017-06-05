@@ -20,18 +20,35 @@ using std::move;
 using std::ostream;
 using std::string;
 
-/* We require a txt file with desired map design to read and the display
-which we call directly to redraw the screen */
-Map::Map(const std::string & mapTxtFile, Display * const display):
-	mapImpl(make_unique<MapImpl>(mapTxtFile, display)) {
-	/* reads in the contents of the entire (rectangular) map */
-	mapImpl->map = std::move(mapImpl->fstream.readRectContent());
+/* We require being passed the display which we call 
+directly to redraw the screen */
+Map::Map(Display * const display):
+	mapImpl(make_unique<MapImpl>(display)) {
+}
+
+/* The spawn point of the player on the map */
+void Map::placePlayer(const Coordinate playerStart) {
+	mapImpl->playerOrigin = playerStart;
+}
+
+Map::~Map() {}
+
+/* Reads a map design from a text file into a vector, as well as 
+storing the map's width and height */
+void Map::readLevel(const string & mapTxtFile) {
+	Fstream fstream{ mapTxtFile };
+
+	/* Fill out the dimensions of the map. The -1 is b/ we start
+	counting at 0 */
+	mapImpl->width = fstream.firstLineLength() - 1;
+	mapImpl->height = fstream.numLines() - 1;
+
+	/* Read the map into a vector */
+	mapImpl->map.reserve(mapImpl->width);
+	mapImpl->map = std::move(fstream.readRectContent());
 
 	updateVisibleArea();
 }
-
-
-Map::~Map() {}
 
 /* Updates where the player (and by extension the vision origin) is on the map. If
 it is not a valid location the player is not moved. Note that newOrigin directly 
@@ -46,8 +63,7 @@ bool Map::validMove(const Coordinate & newOrigin) {
 	/* We aren't allowed to move through walls */
 	if (mapImpl->map[newOrigin.y][newOrigin.x] == mapImpl->wallTile) return false;
 
-	Debug::write(std::to_string(mapImpl->playerOrigin.x) + " " + std::to_string(mapImpl->playerOrigin.y));
-
+	/* Otherwise we have a valid move */
 	return true;
 }
 

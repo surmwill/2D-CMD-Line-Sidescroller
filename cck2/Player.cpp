@@ -12,8 +12,8 @@ using std::make_unique;
 /* Adds the map as one of the player's observers. When
 the player moves, we update the portion of the map the player
 can see. */
-Player::Player(Observer * const map):
-	playerImpl(make_unique <PlayerImpl> ()) {
+Player::Player(Observer * const map, const Coordinate playerStart):
+	playerImpl(make_unique <PlayerImpl> (playerStart)) {
 	addObserver(map);
 }
 
@@ -21,14 +21,18 @@ Player::~Player() {
 }
 
 Player & Player::moveLeft(void) {
+	// The hypothetical next position on the map
 	const Coordinate possiblePosition{ 
 		playerImpl->position.x - 1, 
 		playerImpl->position.y };
 
+	/* If the next position is valid (no walls, etc...) update
+	the player's position */
 	if (notifyTileChange(
 		possiblePosition,
 		playerImpl->playerTile)) playerImpl->position = possiblePosition;
 
+	// a fluid interface
 	return *this;
 }
 
@@ -64,8 +68,7 @@ Player & Player::moveDown(void) {
 
 	if (notifyTileChange(
 		possiblePosition,
-		playerImpl->playerTile
-	)) playerImpl->position = possiblePosition;
+		playerImpl->playerTile)) playerImpl->position = possiblePosition;
 
 	return *this;
 }

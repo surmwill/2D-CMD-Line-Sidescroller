@@ -13,12 +13,16 @@ class Display;
 
 class Map : public Observer {
 public:
-	Map(const std::string & mapTxtFile, Display * const display);
+	Map(Display * const display);
+
 	~Map();
 	
 	virtual bool addressTileChange(
 		const Coordinate & tile,
 		const char newDesign) override;
+
+	void readLevel(const std::string & mapTxtFile);
+	void placePlayer(const Coordinate playerStart);
 
 private:
 	void notifyVisibleArea(void);
