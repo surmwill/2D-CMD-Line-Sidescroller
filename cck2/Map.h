@@ -28,6 +28,7 @@ private:
 	void notifyVisibleArea(void);
 	void updateVisibleArea(void);
 	bool validMove(const Coordinate & newOrigin);
+	bool addressMovementChange(const Coordinate & tile);
 
 	std::unique_ptr<MapImpl> mapImpl;
 	void printVisibleArea(void) const;

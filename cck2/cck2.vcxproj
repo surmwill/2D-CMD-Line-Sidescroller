@@ -140,8 +140,11 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="CmdInterpreter.cpp" />
+    <ClCompile Include="Combat.cpp" />
+    <ClCompile Include="Combatent.cpp" />
     <ClCompile Include="Debug.cpp" />
     <ClCompile Include="Display.cpp" />
+    <ClCompile Include="Enemy.cpp" />
     <ClCompile Include="Fstream.cpp" />
     <ClCompile Include="Level.cpp" />
     <ClCompile Include="LevelOne.cpp" />
@@ -154,10 +157,13 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CmdInterpreter.h" />
+    <ClInclude Include="Combat.h" />
+    <ClInclude Include="Combatent.h" />
     <ClInclude Include="Coordinate.h" />
     <ClInclude Include="Debug.h" />
     <ClInclude Include="Display.h" />
     <ClInclude Include="DisplayImpl.h" />
+    <ClInclude Include="Enemy.h" />
     <ClInclude Include="Fstream.h" />
     <ClInclude Include="Iostream.h" />
     <ClInclude Include="Level.h" />
@@ -167,6 +173,7 @@
     <ClInclude Include="Observer.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="PlayerImpl.h" />
+    <ClInclude Include="Statistics.h" />
     <ClInclude Include="Subject.h" />
     <ClInclude Include="Tile.h" />
     <ClInclude Include="World.h" />

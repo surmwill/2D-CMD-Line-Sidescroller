@@ -1,7 +1,9 @@
 #pragma once
 #include <memory>
+#include <vector>
 #include "Coordinate.h"
 #include "Map.h"
+#include "Enemy.h"
 
 class Observer;
 
@@ -11,6 +13,9 @@ protected:
 
 	//every level has a position where the player starts at
 	const Coordinate playerStart;
+
+	//every level has a set of enemies
+	std::vector <Enemy> enemies;
 
 public:
 	virtual ~Level() = default;

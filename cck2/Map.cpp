@@ -118,8 +118,8 @@ void Map::notifyVisibleArea(void) {
 	mapImpl->display->drawMap(mapImpl->visibleArea);
 }
 
-/* Adjusts the visible area of
-the map after a player movement */
+/* Called whenever a tile on the map needs to be changed. If the
+tile is changed succesfully, true is returned */
 bool Map::addressTileChange(
 	//todo create vector of changes that newTiles get updated to that differ from the map
 	const Coordinate & tileCoord,
@@ -127,19 +127,25 @@ bool Map::addressTileChange(
 
 	/* If the player's tile is being updated, the player's position must
 	have moved. */
-	if (newDesign == mapImpl->playerTile) {
-		/* the map is always once step behind in movement with respect to the player. If
-		we have a valid move (not leaving the map etc...) update where the player is on the map */
-		if (validMove(tileCoord)) {
-			mapImpl->playerOrigin.x = tileCoord.x;
-			mapImpl->playerOrigin.y = tileCoord.y;
-			updateVisibleArea();
+	if (newDesign == mapImpl->playerTile) return addressMovementChange(tileCoord);
 
-			// We have succesfully changed a tile on the map
-			return true;
-		}
-		else return false; // We have not succesfully changed a tile on the map
+	return true;
+}
+
+/* Adjusts the visible area of the map after a player movement. 
+Returns true if the move is valid. */
+bool Map::addressMovementChange(const Coordinate & tileCoord) {
+	/* the map is always once step behind in movement with respect to the player. If
+	we have a valid move (not leaving the map etc...) update where the player is on the map */
+	if (validMove(tileCoord)) {
+		mapImpl->playerOrigin.x = tileCoord.x;
+		mapImpl->playerOrigin.y = tileCoord.y;
+		updateVisibleArea();
+
+		// We have succesfully changed a tile on the map
+		return true;
 	}
+	else return false; // We have not succesfully changed a tile on the map
 }
 
 //prints out the entire map

@@ -3,6 +3,8 @@
 #include <Windows.h>
 #include "WorldImpl.h"
 #include "Display.h"
+#include "Enemy.h"
+#include "Combatent.h"
 
 //delete these
 #include "Coordinate.h"
@@ -19,18 +21,20 @@ World::World() : worldImpl(make_unique <WorldImpl> ()) {
 	display is the map's observer */
 	Observer * map = new Map(worldImpl->display.get());
 
-	/* Every Level subclass has access to the map object. This is 
-	used to cleanly swap levels. Note noDelete prevents deletion 
-	of map pointer through the shared_ptr reset method so we can still pass
-	the map as one of the player's observers */
+	/* Every Level and Enemy subclass has access to the map object.
+	Note that noDelete prevents deletion of map pointer through the
+	shared_ptr reset method so we can still pass the map as one of the
+	player's observers */
 	auto noDelete = [](Observer*) {};
 	Level::map.reset(dynamic_cast <Map *> (map), noDelete);
+	Enemy::map.reset(map, noDelete);
 
 	/* Start at level one */
 	worldImpl->level = make_unique <LevelOne>();
 
 	// Spawn the player and pass the map as one of the player's observers
-	worldImpl->player = make_unique <Player>(map, worldImpl->level->getPlayerStart());
+	worldImpl->playerInCombat = make_unique <Player>(map, worldImpl->level->getPlayerStart());
+	worldImpl->player = dynamic_cast <Player *> (worldImpl->playerInCombat);
 }
 
 

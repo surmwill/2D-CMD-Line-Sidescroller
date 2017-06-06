@@ -11,6 +11,8 @@ LevelOne::LevelOne() : Level{ Coordinate{1,1} } {
 	/* reads in the level one's map to a vector, stores the 
 	map's dimensions, and draws the map */
 	map->readLevel("LevelOne\\LevelOne.txt");
+
+	map->addressTileChange(Coordinate{ 2, 2 }, '*');
 }
 
 

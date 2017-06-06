@@ -1,12 +1,13 @@
 #pragma once
-#include "Subject.h"
 #include <memory>
+#include "Combatent.h"
+#include "Subject.h"
 #include "Coordinate.h"
 
 class Observer;
 struct PlayerImpl;
 
-class Player final : public Subject {
+class Player final : public Subject, public Combatent {
 	std::unique_ptr <PlayerImpl> playerImpl;
 
 public:
