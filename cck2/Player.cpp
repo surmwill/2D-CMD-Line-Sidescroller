@@ -20,7 +20,7 @@ Player::Player(Observer * const map, const Coordinate playerStart):
 Player::~Player() {
 }
 
-Player & Player::moveLeft(void) {
+void Player::moveLeft(void) {
 	// The hypothetical next position on the map
 	const Coordinate possiblePosition{ 
 		playerImpl->position.x - 1, 
@@ -31,12 +31,9 @@ Player & Player::moveLeft(void) {
 	if (notifyTileChange(
 		possiblePosition,
 		playerImpl->playerTile)) playerImpl->position = possiblePosition;
-
-	// a fluid interface
-	return *this;
 }
 
-Player & Player::moveRight(void) {
+void Player::moveRight(void) {
 	const Coordinate possiblePosition{
 		playerImpl->position.x + 1,
 		playerImpl->position.y };
@@ -44,11 +41,9 @@ Player & Player::moveRight(void) {
 	if (notifyTileChange(
 		possiblePosition,
 		playerImpl->playerTile)) playerImpl->position = possiblePosition;
-
-	return *this;
 }
 
-Player & Player::moveUp(void) {
+void Player::moveUp(void) {
 	const Coordinate possiblePosition{
 		playerImpl->position.x,
 		playerImpl->position.y - 1 };
@@ -56,11 +51,9 @@ Player & Player::moveUp(void) {
 	if (notifyTileChange(
 		possiblePosition,
 		playerImpl->playerTile)) playerImpl->position = possiblePosition;
-
-	return *this;
 }
 
-Player & Player::moveDown(void) {
+void Player::moveDown(void) {
 	//we are reading lines further down in the file hence the "y + 1"
 	const Coordinate possiblePosition{
 		playerImpl->position.x,
@@ -69,6 +62,4 @@ Player & Player::moveDown(void) {
 	if (notifyTileChange(
 		possiblePosition,
 		playerImpl->playerTile)) playerImpl->position = possiblePosition;
-
-	return *this;
 }

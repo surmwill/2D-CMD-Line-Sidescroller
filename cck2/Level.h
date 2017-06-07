@@ -1,9 +1,13 @@
 #pragma once
 #include <memory>
+#include <vector>
 #include "Coordinate.h"
 #include "Map.h"
+#include "Enemy.h"
 
 class Observer;
+
+//add a function check aggro which returns a vector of all enemies aggrod after a players move
 
 class Level {
 protected:
@@ -11,6 +15,9 @@ protected:
 
 	//every level has a position where the player starts at
 	const Coordinate playerStart;
+
+	//every level has a set of enemies
+	std::vector <Enemy> enemies;
 
 public:
 	virtual ~Level() = default;
