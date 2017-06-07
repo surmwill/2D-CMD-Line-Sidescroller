@@ -1,8 +1,8 @@
 #pragma once
 #include <memory>
-#include "Combatent.h"
 #include "Subject.h"
 #include "Coordinate.h"
+#include "Combatent.h"
 
 class Observer;
 struct PlayerImpl;
@@ -14,9 +14,9 @@ public:
 	Player(Observer * const map, const Coordinate playerStart);
 	~Player();
 
-	Player & moveLeft(void);
-	Player & moveRight(void);
-	Player & moveUp(void);
-	Player & moveDown(void);
+	void moveLeft(void) override;
+	void moveRight(void) override;
+	void moveUp(void) override;
+	void moveDown(void) override;
 };
 

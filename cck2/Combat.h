@@ -1,8 +1,15 @@
 #pragma once
+#include <vector>
+
+class Combatent;
+
 class Combat
 {
 public:
-	Combat();
+	Combat(
+		std::vector <Combatent *> friendlies,
+		std::vector <Combatent *> enemies);
+
 	~Combat();
 };
 

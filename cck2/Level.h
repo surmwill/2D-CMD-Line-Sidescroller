@@ -7,6 +7,8 @@
 
 class Observer;
 
+//add a function check aggro which returns a vector of all enemies aggrod after a players move
+
 class Level {
 protected:
 	Level(const Coordinate playerStart);
