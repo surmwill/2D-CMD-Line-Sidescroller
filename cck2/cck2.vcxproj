@@ -139,12 +139,14 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Armour.cpp" />
     <ClCompile Include="CmdInterpreter.cpp" />
     <ClCompile Include="Combat.cpp" />
     <ClCompile Include="Combatent.cpp" />
     <ClCompile Include="Debug.cpp" />
     <ClCompile Include="Display.cpp" />
     <ClCompile Include="Enemy.cpp" />
+    <ClCompile Include="Equipment.cpp" />
     <ClCompile Include="Fstream.cpp" />
     <ClCompile Include="Level.cpp" />
     <ClCompile Include="LevelOne.cpp" />
@@ -153,9 +155,11 @@
     <ClCompile Include="Observer.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="Subject.cpp" />
+    <ClCompile Include="Weapon.cpp" />
     <ClCompile Include="World.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Armour.h" />
     <ClInclude Include="CmdInterpreter.h" />
     <ClInclude Include="Combat.h" />
     <ClInclude Include="Combatent.h" />
@@ -164,18 +168,21 @@
     <ClInclude Include="Display.h" />
     <ClInclude Include="DisplayImpl.h" />
     <ClInclude Include="Enemy.h" />
+    <ClInclude Include="Equipment.h" />
     <ClInclude Include="Fstream.h" />
     <ClInclude Include="Iostream.h" />
     <ClInclude Include="Level.h" />
     <ClInclude Include="LevelOne.h" />
     <ClInclude Include="Map.h" />
     <ClInclude Include="MapImpl.h" />
+    <ClInclude Include="Milestones.h" />
     <ClInclude Include="Observer.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="PlayerImpl.h" />
     <ClInclude Include="Statistics.h" />
     <ClInclude Include="Subject.h" />
     <ClInclude Include="Tile.h" />
+    <ClInclude Include="Weapon.h" />
     <ClInclude Include="World.h" />
     <ClInclude Include="WorldImpl.h" />
   </ItemGroup>

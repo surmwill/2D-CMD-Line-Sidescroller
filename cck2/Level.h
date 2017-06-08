@@ -23,7 +23,7 @@ public:
 	virtual ~Level() = default;
 	virtual Coordinate getPlayerStart(void) = 0;
 
-	//every level has a map
+	//every level has acess to the same map class
 	static std::shared_ptr <Map> map;
 };
 
