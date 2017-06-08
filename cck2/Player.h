@@ -4,6 +4,8 @@
 #include "Coordinate.h"
 #include "Combatent.h"
 
+//add enter combat function
+
 class Observer;
 struct PlayerImpl;
 
