@@ -33,4 +33,7 @@ struct MapImpl final {
 	const char wallTile = '#';
 
 	Display * const display;
+
+	// what enemies are represented by on the map
+	const vector <char> enemyTiles{ '@', '&', 'D' };
 };

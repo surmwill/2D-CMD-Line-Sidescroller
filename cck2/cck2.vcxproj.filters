@@ -149,5 +149,8 @@
     <ClInclude Include="Armour.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="LevelOneImpl.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
