@@ -2,10 +2,14 @@
 #include "Level.h"
 #include "Coordinate.h"
 #include "Map.h"
+#include <memory>
 
 class Display;
+struct LevelOneImpl;
 
 class LevelOne final: public Level {
+	std::unique_ptr <LevelOneImpl> levelImpl;
+
 public:
 	LevelOne();
 

@@ -173,6 +173,7 @@
     <ClInclude Include="Iostream.h" />
     <ClInclude Include="Level.h" />
     <ClInclude Include="LevelOne.h" />
+    <ClInclude Include="LevelOneImpl.h" />
     <ClInclude Include="Map.h" />
     <ClInclude Include="MapImpl.h" />
     <ClInclude Include="Milestones.h" />

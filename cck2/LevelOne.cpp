@@ -1,10 +1,13 @@
 #include "LevelOne.h"
-#include <memory>
+#include "LevelOneImpl.h"
 #include "Map.h"
 
 using std::make_shared;
+using std::make_unique;
 
-LevelOne::LevelOne() : Level{ Coordinate{1,1} } {
+LevelOne::LevelOne() : 
+	Level{ Coordinate{1,1} },
+	levelImpl (make_unique <LevelOneImpl> ()) {
 	// spawns the player on tile (1, 1)
 	map->placePlayer(playerStart);
 
@@ -12,6 +15,7 @@ LevelOne::LevelOne() : Level{ Coordinate{1,1} } {
 	map's dimensions, and draws the map */
 	map->readLevel("LevelOne\\LevelOne.txt");
 
+	// ****************** fix this, player does not properly start at {2, 2} ***********************
 	map->addressTileChange(Coordinate{ 2, 2 }, '*');
 }
 
