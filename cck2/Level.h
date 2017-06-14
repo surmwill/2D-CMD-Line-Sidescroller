@@ -19,6 +19,9 @@ protected:
 	//every level has a set of enemies
 	std::vector <Enemy> enemies;
 
+	//every level has a unique set of tiles representing enemies
+	std::vector <char> enemyTiles{};
+
 public:
 	virtual ~Level() = default;
 	virtual Coordinate getPlayerStart(void) = 0;

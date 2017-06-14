@@ -152,5 +152,8 @@
     <ClInclude Include="LevelOneImpl.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="EnemyImpl.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

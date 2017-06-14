@@ -168,6 +168,7 @@
     <ClInclude Include="Display.h" />
     <ClInclude Include="DisplayImpl.h" />
     <ClInclude Include="Enemy.h" />
+    <ClInclude Include="EnemyImpl.h" />
     <ClInclude Include="Equipment.h" />
     <ClInclude Include="Fstream.h" />
     <ClInclude Include="Iostream.h" />
