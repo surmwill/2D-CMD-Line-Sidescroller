@@ -1,4 +1,5 @@
 #include "Fstream.h"
+#include "Coordinate.h"
 #include <algorithm>
 #include <iterator>
 #include <limits>
@@ -11,6 +12,7 @@ using std::vector;
 using std::numeric_limits;
 using std::ios_base;
 using std::noskipws;
+using std::map;
 
 //to delete
 #include "Iostream.h"
@@ -29,7 +31,8 @@ Fstream::~Fstream() {}
 /* counts the number of columns in the first line of a txt file by
 counting the number of characters */
 int Fstream::firstLineLength(void) {
-	ifstream.seekg(0);
+	returnToFileBeginning();
+
 	string firstLine;
 	getline(ifstream, firstLine);
 	return firstLine.length();
@@ -37,7 +40,8 @@ int Fstream::firstLineLength(void) {
 
 //counts the number of rows in a txt file by occurences of '\n'
 int Fstream::numLines(void) {
-	ifstream.seekg(0); //iterator to the beginning of the filestream
+	returnToFileBeginning(); //set the next character to read as the first character in the file
+
 	return static_cast <int> (count ( //the static cast is just to silence warnings
 		istreambuf_iterator <char>(ifstream), 
 		istreambuf_iterator <char>(), //empty brackets means search until EOF
@@ -52,7 +56,8 @@ std::vector <std::vector <char>> Fstream::readRectContent(void) {
 	vector <vector <char>> content;
 	int linesToRead = numLines();
 	int charsToRead = firstLineLength();
-	ifstream.seekg(0);
+	
+	returnToFileBeginning();
 
 	for (int i = 0; i < linesToRead; i++) {
 		vector <char> line;
@@ -90,7 +95,8 @@ vector <vector <char>> Fstream::readTxTBlock(
 	const int linesToRead) {
 	vector <vector <char>> block;
 	vector <char> line;
-	ifstream.seekg(0);
+
+	returnToFileBeginning();
 
 	// skips to out desired starting line by ignoring startLine amount of '\n'
 	for (int i = 0; i < startLine; i++) {
@@ -115,3 +121,13 @@ vector <vector <char>> Fstream::readTxTBlock(
 	return block;
 }
 
+/*std::map <const char, Coordinate> Fstream::findCharOccurences(const char key) {
+	Coordinate locationInFile{ 0, 0 };
+
+	//istreambuf_iterator 
+}*/
+
+//Sets the next character to read from the stream as the first character in the file
+void Fstream::returnToFileBeginning(void) {
+	ifstream.seekg(0);
+}
