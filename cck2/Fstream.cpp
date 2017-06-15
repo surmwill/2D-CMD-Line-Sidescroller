@@ -1,8 +1,10 @@
 #include "Fstream.h"
 #include "Coordinate.h"
+#include "Debug.h"
 #include <algorithm>
 #include <iterator>
 #include <limits>
+#include <sstream>
 
 using std::count;
 using std::string;
@@ -13,6 +15,8 @@ using std::numeric_limits;
 using std::ios_base;
 using std::noskipws;
 using std::map;
+using std::for_each;
+using std::make_pair;
 
 //to delete
 #include "Iostream.h"
@@ -121,11 +125,45 @@ vector <vector <char>> Fstream::readTxTBlock(
 	return block;
 }
 
-/*std::map <const char, Coordinate> Fstream::findCharOccurences(const char key) {
-	Coordinate locationInFile{ 0, 0 };
+/* Finds the coordinates of a set of characters in the txt file. Note
+this is used to find the coordinates of enemy tiles on the map. They are
+then manually programmed into the enemy class b/c this fn is slow */
+void Fstream::findCharOccurences(const vector <char> & keys) {
+	map <const char, const Coordinate> charOccursAt; //a map storing known character locations
+	Coordinate locationInFile{ 0, 0 }; //our current location in the file
+	string line;
+	returnToFileBeginning();
 
-	//istreambuf_iterator 
-}*/
+	while (getline(ifstream, line)) { //go through every line of the file
+		for (const auto c : line) { //go through every character in a line
+			/* Check if the character is in our list of keys, add the location of
+			the character to our map if so */
+			for_each(
+				keys.begin(),
+				keys.end(),
+				[&charOccursAt, c, &locationInFile](char key) {
+				if (c == key) charOccursAt.emplace(c, locationInFile); }
+			);
+			locationInFile.x++; //keep track of where we are in the file
+		}
+
+		/* keep tracks of where we are in the file */
+		locationInFile.x = 0;
+		locationInFile.y++;
+	}
+
+	/* Write the location to debug. Idea: write instead to an enemy file
+	which we can then read from the enemy class. If the file is empty write
+	a message asking to populate the file (i.e. run this function) first */
+	for (auto m : charOccursAt) {
+		std::stringstream ss;
+
+		ss << m.first << " x: " << m.second.x << " y: " << m.second.y;
+		string message = ss.str();
+		Debug::write(message);
+	}
+
+}
 
 //Sets the next character to read from the stream as the first character in the file
 void Fstream::returnToFileBeginning(void) {

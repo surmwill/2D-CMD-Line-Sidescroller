@@ -21,7 +21,7 @@ public:
 		const int linesToRead);
 
 	std::vector <std::vector <char>> readRectContent(void);
-	std::map <const char, Coordinate> findCharOccurences(const char key);
+	void findCharOccurences(const std::vector <char> & keys);
 
 private:
 	void returnToFileBeginning(void);
