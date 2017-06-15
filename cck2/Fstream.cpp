@@ -126,8 +126,7 @@ vector <vector <char>> Fstream::readTxTBlock(
 }
 
 /* Finds the coordinates of a set of characters in the txt file. Note
-this is used to find the coordinates of enemy tiles on the map. They are
-then manually programmed into the enemy class b/c this fn is slow */
+the enemy finder tool achieves the same thing. Use that instead. */
 void Fstream::findCharOccurences(const vector <char> & keys) {
 	map <const char, const Coordinate> charOccursAt; //a map storing known character locations
 	Coordinate locationInFile{ 0, 0 }; //our current location in the file

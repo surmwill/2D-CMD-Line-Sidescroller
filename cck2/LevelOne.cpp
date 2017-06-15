@@ -13,7 +13,7 @@ LevelOne::LevelOne() :
 
 	/* reads in the level one's map to a vector, stores the 
 	map's dimensions, and draws the map */
-	map->readLevel("LevelOne\\LevelOne.txt");
+	map->readLevel("Levels\\LevelOne.txt");
 
 	// ****************** fix this, player does not properly start at {2, 2} ***********************
 	map->addressTileChange(Coordinate{ 2, 2 }, '*');
