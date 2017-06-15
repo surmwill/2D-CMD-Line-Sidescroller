@@ -47,6 +47,8 @@ void Map::readLevel(const string & mapTxtFile) {
 	mapImpl->map.reserve(mapImpl->width);
 	mapImpl->map = std::move(fstream.readRectContent());
 
+	fstream.findCharOccurences({'*'});
+
 	updateVisibleArea();
 }
 
