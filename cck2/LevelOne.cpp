@@ -1,9 +1,17 @@
 #include "LevelOne.h"
 #include "LevelOneImpl.h"
 #include "Map.h"
+#include <fstream>
+#include <sstream>
+
+#include "Debug.h"
 
 using std::make_shared;
 using std::make_unique;
+using std::ifstream;
+using std::getline;
+using std::string;
+using std::stringstream;
 
 LevelOne::LevelOne() : 
 	Level{ Coordinate{1,1} },
@@ -17,6 +25,8 @@ LevelOne::LevelOne() :
 
 	// ****************** fix this, player does not properly start at {2, 2} ***********************
 	map->addressTileChange(Coordinate{ 2, 2 }, '*');
+
+	findEnemies();
 }
 
 
@@ -26,4 +36,28 @@ LevelOne::~LevelOne() {}
 passed onto the player class */
 Coordinate LevelOne::getPlayerStart(void) {
 	return Level::playerStart;
+}
+
+void LevelOne::findEnemies(void) {
+	ifstream ifs("EnemyInfo\\LevelOne.txt");
+	string line;
+	string dummy;
+	char tile;
+	Coordinate origin;
+
+	while (getline(ifs, line)) {
+		stringstream ss{ line };
+
+		// Example format: "* x: 34 y: 35"
+		ss >> tile; //read the tile '*'
+		ss >> dummy; //read x: (unimportant so store in dummy)
+		ss >> origin.x; //read x-coordinate '34'
+		ss >> dummy; //read y: (unimportant so store in dummy)
+		ss >> origin.y; //read y-coordinate '35'
+
+		Enemy e{ origin, tile };
+
+		//construct the enemy
+		//enemies.emplace_back(origin, tile);
+	}
 }

@@ -48,7 +48,7 @@ int main() {
 		charNum++;
 	}
 
-	map <const char, const Coordinate> charOccursAt; //a map storing known character locations
+	vector < pair <const char, const Coordinate>> charOccursAt; //a map storing known character locations
 	Coordinate locationInFile{ 0, 0 }; //our current location in the file
 	string line;
 
@@ -60,7 +60,7 @@ int main() {
 				keys.begin(),
 				keys.end(),
 				[&charOccursAt, c, &locationInFile](char key) {
-				if (c == key) charOccursAt.emplace(c, locationInFile); }
+				if (c == key) charOccursAt.emplace_back(c, locationInFile); }
 			);
 
 			locationInFile.x++; // keep track of where we are in the file
