@@ -11,9 +11,13 @@ class Enemy : public Combatent {
 
 public:
 	static std::shared_ptr <Observer> map;
-	inline virtual ~Enemy() = default;
 
-protected:
 	Enemy(const Coordinate & origin, const char tile);
+	virtual ~Enemy();
+
+	virtual void moveLeft(void) override;
+	virtual void moveRight(void) override;
+	virtual void moveUp(void) override;
+	virtual void moveDown(void) override;
 };
 

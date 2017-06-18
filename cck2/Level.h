@@ -4,6 +4,7 @@
 #include "Coordinate.h"
 #include "Map.h"
 #include "Enemy.h"
+#include <string>
 
 class Observer;
 
