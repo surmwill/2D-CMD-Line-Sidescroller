@@ -14,6 +14,7 @@ public:
 	LevelOne();
 
 	virtual Coordinate getPlayerStart(void);
+	virtual void findEnemies(void) override;
 
 	~LevelOne();
 };

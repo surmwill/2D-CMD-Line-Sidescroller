@@ -27,3 +27,7 @@ passed onto the player class */
 Coordinate LevelOne::getPlayerStart(void) {
 	return Level::playerStart;
 }
+
+void LevelOne::findEnemies(void) {
+
+}

@@ -26,6 +26,9 @@ public:
 	virtual ~Level() = default;
 	virtual Coordinate getPlayerStart(void) = 0;
 
+	//fills our vector of enemies
+	virtual void findEnemies(void) = 0;
+
 	//every level has acess to the same map class
 	static std::shared_ptr <Map> map;
 };
