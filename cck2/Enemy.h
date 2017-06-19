@@ -1,5 +1,6 @@
 #pragma once
 #include <memory>
+#include <string>
 #include "Combatent.h"
 
 class Observer;
@@ -19,5 +20,7 @@ public:
 	virtual void moveRight(void) override;
 	virtual void moveUp(void) override;
 	virtual void moveDown(void) override;
+
+	virtual void giveDialogue(const std::string & text) override;
 };
 

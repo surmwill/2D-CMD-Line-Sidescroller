@@ -4,6 +4,7 @@
 
 using std::make_unique;
 using std::shared_ptr;
+using std::string;
 
 shared_ptr <Observer> Enemy::map = nullptr;
 
@@ -21,3 +22,7 @@ void Enemy::moveRight(void) {}
 void Enemy::moveUp(void) {}
 
 void Enemy::moveDown(void) {}
+
+void Enemy::giveDialogue(const string & text) {
+
+}
