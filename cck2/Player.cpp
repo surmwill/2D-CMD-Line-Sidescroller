@@ -8,6 +8,7 @@
 using std::vector;
 
 using std::make_unique;
+using std::string;
 
 /* Adds the map as one of the player's observers. When
 the player moves, we update the portion of the map the player
@@ -62,4 +63,8 @@ void Player::moveDown(void) {
 	if (notifyTileChange(
 		possiblePosition,
 		playerImpl->playerTile)) playerImpl->position = possiblePosition;
+}
+
+void Player::giveDialogue(const string & text) {
+
 }

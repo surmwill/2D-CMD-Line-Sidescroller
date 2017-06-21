@@ -165,7 +165,9 @@
     <ClInclude Include="Combatent.h" />
     <ClInclude Include="Coordinate.h" />
     <ClInclude Include="Debug.h" />
+    <ClInclude Include="Dialogue.h" />
     <ClInclude Include="Display.h" />
+    <ClInclude Include="DisplayedMap.h" />
     <ClInclude Include="DisplayImpl.h" />
     <ClInclude Include="Enemy.h" />
     <ClInclude Include="EnemyImpl.h" />

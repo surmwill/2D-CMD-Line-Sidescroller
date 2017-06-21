@@ -47,7 +47,7 @@ void Display::disableConsoleCursor(void) {
 Also disables resizing the console, and going fullscreen */
 void Display::setConsoleProperties(void) {
 	HWND hConsole;
-	MENUITEMINFO mii;
+	//MENUITEMINFO mii; 
 	const int updateTime = 10;
 	const int dontCareDim = 0;
 
@@ -187,7 +187,7 @@ void Display::drawMap(vector <vector <char>> & newTiles) {
 	DWORD numWrites = 0;
 
 	//We begin redrawing the screen from the top left
-	nextDrawPosition(0, 0);
+	setNextDrawPosition(0, 0);
 
 	//inital value that will NEVER appear on a map. Only ' ' will be used for whitespace
 	WCHAR toWrite = '\t';
@@ -303,7 +303,7 @@ void Display::drawMap(vector <vector <char>> & newTiles) {
 void Display::drawUI(void) {
 	/* start drawing the line after the bottom of the map. The map is in charge
 	of updating it's own section of the display */
-	nextDrawPosition(displayImpl->uiStarts, 0);
+	setNextDrawPosition(displayImpl->uiStarts, 0);
 
 	writeConsole(' ', displayImpl->consoleWidth); //draw a line of blank spaces for clarity
 	writeConsole('~', displayImpl->consoleWidth); //draw a line of '~' to section off the menu
@@ -317,7 +317,7 @@ void Display::drawUI(void) {
 
 /* Clears the dialogue section with spaces */
 void Display::clearDialogue(void) {
-	nextDrawPosition(displayImpl->dialogueStarts, 0);
+	setNextDrawPosition(displayImpl->dialogueStarts, 0);
 
 	const int numRows = displayImpl->consoleHeight - displayImpl->dialogueStarts;
 	const int numWrites = numRows * displayImpl->consoleWidth;
@@ -328,18 +328,25 @@ void Display::clearDialogue(void) {
 /* Displays the dialogue on the bottom the screen. We have 4 lines for dialogue so
 the line parameter can be set to {0, 1, 2, 3} */
 void Display::drawDialogue(
-	const int line, 
-	const string name, 
-	const string dialogue,
+	const string & name, 
+	const string & dialogue,
 	bool slowType) {
-	nextDrawPosition(displayImpl->dialogueStarts + line, 0);
+	const string addedFormat = ": "; // Appended after a name to pretty print the dialogue
+	findNextBestDrawPosition(name.length() + addedFormat.length() + dialogue.length()); 
+	setNextDrawPosition(displayImpl->currentDialogueLine, 0);
 
-	writeStringToConsole(name + ": ");
+	writeStringToConsole(name + addedFormat);
 	writeStringToConsole(dialogue, slowType);
 }
 
 /* Sets the cursor position which corresponds to the next place a character is drawn */
-void Display::nextDrawPosition(const int row, const int col) {
+void Display::setNextDrawPosition(const int row, const int col) {
 	displayImpl->cursor.Y = row;
 	displayImpl->cursor.X = col;
+}
+
+/* Sets the cursor position to the next free line. If the text doesn't fit in that line,
+the text display is cleared and the text is displayed on the first line */
+void Display::findNextBestDrawPosition(const int textLength) {
+
 }

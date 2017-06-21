@@ -5,7 +5,8 @@
 #include <vector>
 #include "Coordinate.h"
 #include <ostream>
-#include "Display.h"
+#include "DisplayedMap.h"
+#include <memory>
 
 //to delete
 #include <iostream>
@@ -17,7 +18,7 @@ using std::pair;
 using std::vector;
 
 struct MapImpl final {
-	MapImpl(Display * const display) : display(display) {};
+	MapImpl(std::unique_ptr <DisplayedMap> display) : display(move(display)) {};
 
 	/* the Map's dimensional properties */
 	int width, height; 
@@ -32,7 +33,7 @@ struct MapImpl final {
 	const char playerTile = '+';
 	const char wallTile = '#';
 
-	Display * const display;
+	std::unique_ptr <DisplayedMap> display;
 
 	// what enemies are represented by on the map
 	const vector <char> enemyTiles{ '@', '&', 'D' };

@@ -11,11 +11,11 @@
 
 struct MapImpl;
 struct Coordinate;
-class Display;
+class DisplayedMap;
 
 class Map : public Observer {
 public:
-	Map(Display * const display);
+	Map(std::unique_ptr <DisplayedMap> display);
 
 	~Map();
 	

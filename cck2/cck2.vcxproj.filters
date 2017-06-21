@@ -155,5 +155,11 @@
     <ClInclude Include="EnemyImpl.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Dialogue.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DisplayedMap.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

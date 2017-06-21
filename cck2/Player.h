@@ -1,5 +1,6 @@
 #pragma once
 #include <memory>
+#include <string>
 #include "Subject.h"
 #include "Coordinate.h"
 #include "Combatent.h"
@@ -20,5 +21,7 @@ public:
 	void moveRight(void) override;
 	void moveUp(void) override;
 	void moveDown(void) override;
+
+	void giveDialogue(const std::string & text) override;
 };
 
