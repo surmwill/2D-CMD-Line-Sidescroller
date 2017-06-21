@@ -5,6 +5,8 @@
 #include "Display.h"
 #include "Enemy.h"
 #include "Combatent.h"
+#include "DisplayedMap.h"
+#include <memory>
 
 //delete these
 #include "Coordinate.h"
@@ -12,14 +14,17 @@
 #include "Iostream.h"
 
 using std::make_unique;
+using std::move;
 
 class Observer;
 
 /* Main constructor */
 World::World() : worldImpl(make_unique <WorldImpl> ()) {
+	auto displayedMap = make_unique <DisplayedMap>(worldImpl->display.get());
+
 	/* Create a new map object which has yet to load a level. The
 	display is the map's observer */
-	Observer * map = new Map(worldImpl->display.get());
+	Observer * map = new Map(move(displayedMap));
 
 	/* Every Level and Enemy subclass has access to the map object.
 	Note that noDelete prevents deletion of map pointer through the

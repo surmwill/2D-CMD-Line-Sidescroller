@@ -9,7 +9,7 @@
 #include <string>
 #include <utility>
 #include "Coordinate.h"
-#include "Display.h"
+#include "DisplayedMap.h"
 
 //to delete
 //#include "Debug.h"
@@ -19,11 +19,12 @@ using std::vector;
 using std::move;
 using std::ostream;
 using std::string;
+using std::unique_ptr;
 
 /* We require being passed the display which we call 
 directly to redraw the screen */
-Map::Map(Display * const display):
-	mapImpl(make_unique<MapImpl>(display)) {
+Map::Map(std::unique_ptr <DisplayedMap> display):
+	mapImpl(make_unique<MapImpl>(move(display))) {
 }
 
 /* The spawn point of the player on the map */
