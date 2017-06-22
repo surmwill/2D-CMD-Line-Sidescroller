@@ -22,7 +22,6 @@ class Display final {
 	void disableConsoleCursor(void);
 	void clearDialogue(void);
 	void setNextDrawPosition(const int row, const int col);
-	void findNextBestDrawPosition(const int textLength);
 	void adjustTextProperties(void);
 	void drawUI(void);
 

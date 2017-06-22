@@ -30,7 +30,7 @@ struct DisplayImpl {
 	const SHORT uiStarts = 25; // 4 Lines: (25 - 28) are reserved for diaplying the u.i
 	const SHORT dialogueStarts = 29; // 4 Lines (29 - 32) are reserved for printing dialogue
 
-	const int currentDialogueLine = dialogueStarts;
+	int currentDialogueLine = dialogueStarts; // The next avalible empty line for drawing dialogue
 
 	LPCWSTR title = L"CCK2"; //title of the game - to be displayed on the console window
 
