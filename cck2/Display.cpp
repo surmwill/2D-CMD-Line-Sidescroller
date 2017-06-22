@@ -5,6 +5,7 @@
 #include <utility>
 #include <cwchar>
 #include <string>
+#include <cmath>
 
 //#define NOMINMAX
 //#define WIN32_LEAN_AND_MEAN
@@ -31,6 +32,12 @@ Display::Display(): displayImpl(make_unique <DisplayImpl> ()) {
 	disableConsoleCursor();
 	drawUI();
 	clearDialogue();
+
+	drawDialogue("will", "hi");
+	drawDialogue("sabrina", "hey");
+	drawDialogue("will", "hi");
+	drawDialogue("sabrina", "hey");
+	drawDialogue("tom", "yo");
 }
 
 Display::~Display() {}
@@ -315,14 +322,21 @@ void Display::drawUI(void) {
 	writeConsole('~', displayImpl->consoleWidth); //draw a line of blank spaces for clarity
 }
 
-/* Clears the dialogue section with spaces */
+/* Clears the dialogue section with spaces and sets the
+next draw position to the first line of the dialogue section */
 void Display::clearDialogue(void) {
+	// start at the beginning of where dialogue is drawn
 	setNextDrawPosition(displayImpl->dialogueStarts, 0);
 
 	const int numRows = displayImpl->consoleHeight - displayImpl->dialogueStarts;
 	const int numWrites = numRows * displayImpl->consoleWidth;
 
+	//clear the entire dialogue section
 	writeConsole(' ', numWrites);
+
+	// our next draw position is at the beginning of where dialogue is drawn
+	setNextDrawPosition(displayImpl->dialogueStarts, 0);
+	displayImpl->currentDialogueLine = displayImpl->dialogueStarts;
 }
 
 /* Displays the dialogue on the bottom the screen. We have 4 lines for dialogue so
@@ -332,21 +346,31 @@ void Display::drawDialogue(
 	const string & dialogue,
 	bool slowType) {
 	const string addedFormat = ": "; // Appended after a name to pretty print the dialogue
-	findNextBestDrawPosition(name.length() + addedFormat.length() + dialogue.length()); 
-	setNextDrawPosition(displayImpl->currentDialogueLine, 0);
+	const int textLength = name.length() + addedFormat.length() + dialogue.length();
 
+	// the 2 double casts are neeeded to avoid the truncating of the division before ceil()
+	const int linesNeeded = static_cast <int> (ceil(
+		static_cast <double> (textLength) / static_cast <double> (displayImpl->consoleWidth)));
+
+	// -1 b/c currentDialogueLine is empty and avalible for writing
+	if (displayImpl->currentDialogueLine - 1 + linesNeeded >= displayImpl->consoleHeight) clearDialogue();
+	else setNextDrawPosition(displayImpl->currentDialogueLine, 0);
+	
+	// adjust where the next empty line for dialgoue drawing is
+	displayImpl->currentDialogueLine += linesNeeded;
+
+	// draw the dialogue
 	writeStringToConsole(name + addedFormat);
 	writeStringToConsole(dialogue, slowType);
+
+	// next steps: pass cmdInterpreter to display so when there is too much text they have to press a key
+	// to clear the rpevious text and display the new one. Also, if a check if a word gets split between 2 lines
+	// and fix that (check for 81st character, if not a space, find the beginning of the word and add spaces until
+	// the 81st character is a space and the word gets pushed to the next line
 }
 
 /* Sets the cursor position which corresponds to the next place a character is drawn */
 void Display::setNextDrawPosition(const int row, const int col) {
 	displayImpl->cursor.Y = row;
 	displayImpl->cursor.X = col;
-}
-
-/* Sets the cursor position to the next free line. If the text doesn't fit in that line,
-the text display is cleared and the text is displayed on the first line */
-void Display::findNextBestDrawPosition(const int textLength) {
-
 }
