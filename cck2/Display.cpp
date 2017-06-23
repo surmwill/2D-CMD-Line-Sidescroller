@@ -345,12 +345,39 @@ void Display::drawDialogue(
 	const string & name, 
 	const string & dialogue,
 	bool slowType) {
-	const string addedFormat = ": "; // Appended after a name to pretty print the dialogue
-	const int textLength = name.length() + addedFormat.length() + dialogue.length();
+	const string toWrite = name + ": " + dialogue; // Appended after a name to pretty print the dialogue
+
+	// 81 characters span the screen (0 - 80), we need to check the 80th character, hence the -1
+	int lineBreak = displayImpl->consoleWidth - 1;
+
+	// additional spaces may be padded so a word is not split between 2 lines
+	int spacesNeeded = 0;
+
+	while (toWrite[lineBreak] != ' ') {
+		lineBreak--;
+		spacesNeeded++;
+	}
+
+	// take into account lineBreak at characters 80, 160, ...
+	if (spacesNeeded != 0) {
+		/* +1 b/c substr wants the number of characters to be copied, since 
+		lineBreak is an index we have to account for copying the 0th element */
+		string dialogueOne = toWrite.substr(0, (lineBreak + 1));
+
+		// pad spaces
+		for (int i = 0; i < spacesNeeded; i++) {
+			dialogueOne += ' ';
+		}
+
+		/* dialogueOne copies characters: 0 - lineBreak, dialogueTwo copies
+		the rest of the characters starting from lineBreak */
+		string dialogueTwo = toWrite.substr(lineBreak + 1);
+
+	}
 
 	// the 2 double casts are neeeded to avoid the truncating of the division before ceil()
 	const int linesNeeded = static_cast <int> (ceil(
-		static_cast <double> (textLength) / static_cast <double> (displayImpl->consoleWidth)));
+		static_cast <double> (toWrite.length()) / static_cast <double> (displayImpl->consoleWidth)));
 
 	// -1 b/c currentDialogueLine is empty and avalible for writing
 	if (displayImpl->currentDialogueLine - 1 + linesNeeded >= displayImpl->consoleHeight) clearDialogue();
@@ -360,8 +387,7 @@ void Display::drawDialogue(
 	displayImpl->currentDialogueLine += linesNeeded;
 
 	// draw the dialogue
-	writeStringToConsole(name + addedFormat);
-	writeStringToConsole(dialogue, slowType);
+	writeStringToConsole(toWrite, slowType);
 
 	// next steps: pass cmdInterpreter to display so when there is too much text they have to press a key
 	// to clear the rpevious text and display the new one. Also, if a check if a word gets split between 2 lines
