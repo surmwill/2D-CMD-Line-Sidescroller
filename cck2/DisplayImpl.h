@@ -31,6 +31,10 @@ struct DisplayImpl {
 	const SHORT dialogueStarts = 29; // 4 Lines (29 - 32) are reserved for printing dialogue
 
 	int currentDialogueLine = dialogueStarts; // The next avalible empty line for drawing dialogue
+	const int dialogueLines = dialogueStarts - uiStarts; //The number of lines availible for drawing dialogue
+
+	//The maximum length of a dialogue string that can be displayed, unsigned b/c I don't like warnings
+	const unsigned int maxDialogueLength = dialogueLines * consoleWidth; 
 
 	LPCWSTR title = L"CCK2"; //title of the game - to be displayed on the console window
 

@@ -36,6 +36,7 @@ public:
 	void drawDialogue(
 		const std::string & name, 
 		const std::string & dialogue,
+		bool finalDialogue = false,
 		bool slowType = true);
 };
 

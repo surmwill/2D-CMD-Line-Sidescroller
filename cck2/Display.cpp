@@ -33,11 +33,11 @@ Display::Display(): displayImpl(make_unique <DisplayImpl> ()) {
 	drawUI();
 	clearDialogue();
 
-	drawDialogue("will", "hi");
-	drawDialogue("sabrina", "hey");
-	drawDialogue("will", "hi");
-	drawDialogue("sabrina", "hey");
-	drawDialogue("tom", "yo");
+	drawDialogue("sabrina", "hey", true);
+	drawDialogue("will", "01234567890 1234567890 1234567890 1234567890 1234567890 12345678904 ad dsa gred frefre fwedew 01234567890 1234567890 12 frefre fwedew 01234567890 1234567890 12 frefre fwedew 01234567890 1234567890 12 frefre fwedew 01234567890 1234567890 12 frefre fwedew 01234567890 1234567890 12");
+	//drawDialogue("will", "hi");
+	//drawDialogue("sabrina", "hey");
+	//drawDialogue("tom", "yo");
 }
 
 Display::~Display() {}
@@ -344,35 +344,72 @@ the line parameter can be set to {0, 1, 2, 3} */
 void Display::drawDialogue(
 	const string & name, 
 	const string & dialogue,
+	bool finalDialogue,
 	bool slowType) {
-	const string toWrite = name + ": " + dialogue; // Appended after a name to pretty print the dialogue
+	string toWrite;
+	if(name != "") toWrite = name + ": " + dialogue; // ": " is Appended after a name to pretty print the dialogue
+	// Otherwise, if no name is provided there is no need to format anything
 
-	// 81 characters span the screen (0 - 80), we need to check the 80th character, hence the -1
-	int lineBreak = displayImpl->consoleWidth - 1;
+	int nextLineBreak = displayImpl->consoleWidth; // The character that needs to be a space in it's respected line
+	unsigned int lineBreak = nextLineBreak; // The actual character we are testing to see if it's a space. unsigned b/c I don't like warnings
 
 	// additional spaces may be padded so a word is not split between 2 lines
 	int spacesNeeded = 0;
 
-	while (toWrite[lineBreak] != ' ') {
-		lineBreak--;
-		spacesNeeded++;
-	}
+	const unsigned int spaceLeft = (displayImpl->consoleHeight - displayImpl->currentDialogueLine) *
+		displayImpl->consoleWidth;
 
-	// take into account lineBreak at characters 80, 160, ...
-	if (spacesNeeded != 0) {
-		/* +1 b/c substr wants the number of characters to be copied, since 
-		lineBreak is an index we have to account for copying the 0th element */
-		string dialogueOne = toWrite.substr(0, (lineBreak + 1));
-
-		// pad spaces
-		for (int i = 0; i < spacesNeeded; i++) {
-			dialogueOne += ' ';
+	while (toWrite.length() > lineBreak) {
+		/* If the current dialogue toWrite (with formatted spaces) is longer 
+		than what can be drawn on an entirely screen, print an error */
+		if (toWrite.length() > displayImpl->maxDialogueLength) {
+			toWrite = "TEXT ERROR: formatted dialogue length is: " + to_string(toWrite.length())
+				+ " characters, the maximum length it  can be is: " + to_string(displayImpl->maxDialogueLength) 
+				+ " characters.";
+			break;
+		}
+		/* If the current dialogue toWrite (with formatted spaces) is longer 
+		than what can be drawn on the current screen (which may contain previous dialogue), 
+		wait for the player to press space to continue the dialogue so they don't miss
+		anything */
+		else if (toWrite.length() > spaceLeft) {
+			displayImpl->currentDialogueLine = displayImpl->consoleHeight - 1; // print the message on the bottom of the screen
+			/* The message takes up one line, pushing our currentDialogue line equal to the console height (calculated later in this fn)
+			which triggers the "press space to continue" */
+			toWrite = "Press space to continue reading... "; 
+			break;
+		}
+	
+		/* If a word is split between two lines, find the last character of the
+		last full word that fits on the current line. -1 to adjust for the 0th index
+		in a string */
+		while (toWrite[lineBreak - 1] != ' ') {
+			lineBreak--;
+			spacesNeeded++;
 		}
 
-		/* dialogueOne copies characters: 0 - lineBreak, dialogueTwo copies
-		the rest of the characters starting from lineBreak */
-		string dialogueTwo = toWrite.substr(lineBreak + 1);
+		// A word is split between lines, pad with spaces
+		if (spacesNeeded != 0) {
+			/* copy toWrite up to and including the (lineBreak - 1)th index 
+			(the last character of the last word to be printed on the line)  */
+			string dialogueOne = toWrite.substr(0, (lineBreak));
 
+			// pad spaces to correctly split the dialogue
+			for (int i = 0; i < spacesNeeded; i++) {
+				dialogueOne += ' ';
+			}
+
+			/* dialogueOne copies characters: 0 to lineBreak - 1, dialogueTwo copies
+			the rest of the characters starting from lineBreak */
+			string dialogueTwo = toWrite.substr(lineBreak);
+	
+			toWrite = dialogueOne + dialogueTwo; // reconstruct the string
+			spacesNeeded = 0;
+		}
+
+		// check if the next line needs to be split up
+		nextLineBreak += displayImpl->consoleWidth;
+		lineBreak = nextLineBreak;
 	}
 
 	// the 2 double casts are neeeded to avoid the truncating of the division before ceil()
@@ -389,10 +426,11 @@ void Display::drawDialogue(
 	// draw the dialogue
 	writeStringToConsole(toWrite, slowType);
 
+	/* If the current dialogue box is filled or it is the final part of conversation wait for the user to press space to clear the dialogue box */
+	//if (finalDialgoue || displayImpl->currentDialogueLine >= displayImpl->consoleHeight) then wait for user to press space
+	
 	// next steps: pass cmdInterpreter to display so when there is too much text they have to press a key
-	// to clear the rpevious text and display the new one. Also, if a check if a word gets split between 2 lines
-	// and fix that (check for 81st character, if not a space, find the beginning of the word and add spaces until
-	// the 81st character is a space and the word gets pushed to the next line
+	// to clear the rpevious text and display the new one.
 }
 
 /* Sets the cursor position which corresponds to the next place a character is drawn */
