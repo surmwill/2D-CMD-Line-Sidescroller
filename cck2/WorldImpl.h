@@ -8,7 +8,7 @@ class Observer;
 class Combatent;
 
 struct WorldImpl {
-	WorldImpl() : display(std::make_unique <Display>()) {};
+	WorldImpl() {};
 
 	std::unique_ptr <Level> level;
 	std::unique_ptr <Display> display;

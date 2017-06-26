@@ -9,6 +9,7 @@
 
 struct DisplayImpl;
 struct Coordinate;
+class DisplayCommands;
 
 class Display final {
 	std::unique_ptr <DisplayImpl> displayImpl;
@@ -26,7 +27,7 @@ class Display final {
 	void drawUI(void);
 
 public:
-	Display();
+	Display(std::unique_ptr <DisplayCommands> cmd);
 	~Display();
 
 	void drawMap(

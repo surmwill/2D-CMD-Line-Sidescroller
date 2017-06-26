@@ -3,10 +3,11 @@
 #include <vector>
 #include "Coordinate.h"
 #include <utility>
+#include "DisplayCommands.h"
 
 struct DisplayImpl {
-	DisplayImpl() : hOut(GetStdHandle(STD_OUTPUT_HANDLE)) {
-		prevDisplay.reserve(mapHeight);
+	DisplayImpl(std::unique_ptr <DisplayCommands> cmd) : hOut(GetStdHandle(STD_OUTPUT_HANDLE)), cmd{ std::move(cmd) } {
+		prevDisplay.reserve(mapHeight); // Intializes the previous display dimenion's t that of our map
 		for (int i = 0; i < mapHeight; i++) {
 			std::vector <char> line;
 			line.reserve(consoleWidth);
@@ -46,4 +47,8 @@ struct DisplayImpl {
 	/* since most of the map will be spaces, if we start with a screen
 	full of spaces and only redraw the non spaces we eliminate some redrawing */
 	std::vector <std::vector <char>> prevDisplay;
+
+	/* Used for when we need player input to continue. An example would be waiting for
+	the spacebar to be pressed before clearing read dialogue */
+	std::unique_ptr <DisplayCommands> cmd;
 };

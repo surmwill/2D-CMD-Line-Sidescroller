@@ -2,6 +2,7 @@
 #include "Iostream.h"
 #include "DisplayImpl.h"
 #include "Coordinate.h"
+#include "DisplayCommands.h"
 #include <utility>
 #include <cwchar>
 #include <string>
@@ -10,6 +11,7 @@
 //#define NOMINMAX
 //#define WIN32_LEAN_AND_MEAN
 #include <Windows.h>
+
 
 using std::make_unique;
 using std::vector;
@@ -22,10 +24,11 @@ using std::string;
 #include "Iostream.h"
 #include "Debug.h"
 using std::to_string;
+using std::unique_ptr;
 
 /* Intializes the console screen by setting its dimensions and 
 hiding the flashing cursor */
-Display::Display(): displayImpl(make_unique <DisplayImpl> ()) {
+Display::Display(unique_ptr <DisplayCommands> cmd): displayImpl(make_unique <DisplayImpl> (std::move(cmd))) {
 	adjustTextProperties();
 	setConsoleProperties();
 	setConsoleDimensions();
@@ -426,8 +429,11 @@ void Display::drawDialogue(
 	// draw the dialogue
 	writeStringToConsole(toWrite, slowType);
 
-	/* If the current dialogue box is filled or it is the final part of conversation wait for the user to press space to clear the dialogue box */
-	//if (finalDialgoue || displayImpl->currentDialogueLine >= displayImpl->consoleHeight) then wait for user to press space
+	/* If the current dialogue box is filled or it is the final part of
+	the conversation wait for the user to press space to clear the dialogue box */
+	if (finalDialogue || displayImpl->currentDialogueLine >= displayImpl->consoleHeight) {
+		while(!displayImpl->cmd->spacePressed()) {}
+	}
 	
 	// next steps: pass cmdInterpreter to display so when there is too much text they have to press a key
 	// to clear the rpevious text and display the new one.

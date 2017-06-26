@@ -8,7 +8,7 @@
 using std::istream;
 using std::string;
 
-CmdInterpreter::CmdInterpreter(istream * input) : input{input} {
+CmdInterpreter::CmdInterpreter(istream * input) : input{ input }, world{ this } {
 	if (!input) input = &cin;
 	processInput();
 }

@@ -3,11 +3,12 @@
 #include "Player.h"
 
 class Level;
+class CmdInterpreter;
 struct WorldImpl;
 
 class World final {
 public:
-	World();
+	World(CmdInterpreter * const cmd);
 	~World();
 	World & movePlayer(const int direction);
 
