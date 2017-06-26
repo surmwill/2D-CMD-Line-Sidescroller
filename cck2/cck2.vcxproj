@@ -167,6 +167,7 @@
     <ClInclude Include="Debug.h" />
     <ClInclude Include="Dialogue.h" />
     <ClInclude Include="Display.h" />
+    <ClInclude Include="DisplayCommands.h" />
     <ClInclude Include="DisplayedMap.h" />
     <ClInclude Include="DisplayImpl.h" />
     <ClInclude Include="Enemy.h" />

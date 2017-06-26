@@ -6,6 +6,7 @@ class CmdInterpreter
 {
 	std::istream * input;
 	World world;
+
 	void processInput(void);
 	bool isPressed(const int key);
 

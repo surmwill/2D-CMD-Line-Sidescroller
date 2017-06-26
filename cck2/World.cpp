@@ -6,6 +6,8 @@
 #include "Enemy.h"
 #include "Combatent.h"
 #include "DisplayedMap.h"
+#include "CmdInterpreter.h"
+#include "DisplayCommands.h"
 #include <memory>
 
 //delete these
@@ -19,7 +21,13 @@ using std::move;
 class Observer;
 
 /* Main constructor */
-World::World() : worldImpl(make_unique <WorldImpl> ()) {
+World::World(CmdInterpreter * const cmd) : worldImpl(make_unique <WorldImpl> ()) {
+	// Restricts the display's access to the cmdInterpreter's public functions 
+	auto displayCmd = make_unique <DisplayCommands>(cmd); 
+
+	worldImpl->display = make_unique <Display>(move(displayCmd));
+
+	//Restricts the map's access to the display's public functions
 	auto displayedMap = make_unique <DisplayedMap>(worldImpl->display.get());
 
 	/* Create a new map object which has yet to load a level. The
