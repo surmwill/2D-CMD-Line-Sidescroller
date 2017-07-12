@@ -12,6 +12,7 @@
 //#define WIN32_LEAN_AND_MEAN
 #include <Windows.h>
 
+//this is one line of code added
 
 using std::make_unique;
 using std::vector;
@@ -359,6 +360,7 @@ void Display::drawDialogue(
 	// additional spaces may be padded so a word is not split between 2 lines
 	int spacesNeeded = 0;
 
+	// The amount of space left (not covered by previous dialogue) that is availible for the current dialogue to fill
 	const unsigned int spaceLeft = (displayImpl->consoleHeight - displayImpl->currentDialogueLine) *
 		displayImpl->consoleWidth;
 
