@@ -434,7 +434,7 @@ void Display::drawDialogue(
 	/* If the current dialogue box is filled or it is the final part of
 	the conversation wait for the user to press space to clear the dialogue box */
 	if (finalDialogue || displayImpl->currentDialogueLine >= displayImpl->consoleHeight) {
-		while(!displayImpl->cmd->spacePressed()) {}
+		//while(!displayImpl->cmd->spacePressed()) {}
 	}
 	
 	// next steps: pass cmdInterpreter to display so when there is too much text they have to press a key

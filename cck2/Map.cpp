@@ -12,7 +12,7 @@
 #include "DisplayedMap.h"
 
 //to delete
-//#include "Debug.h"
+#include "Debug.h"
 
 using std::make_unique;
 using std::vector;

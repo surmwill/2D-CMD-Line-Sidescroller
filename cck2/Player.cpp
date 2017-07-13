@@ -5,8 +5,9 @@
 #include "Iostream.h"
 #include <vector>
 #include "Coordinate.h"
-using std::vector;
+#include "Debug.h"
 
+using std::vector;
 using std::make_unique;
 using std::string;
 

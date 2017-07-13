@@ -4,6 +4,7 @@
 #include <string>
 #include <conio.h>
 #include <Windows.h>
+#include "Debug.h"
 
 using std::istream;
 using std::string;
@@ -56,6 +57,8 @@ void CmdInterpreter::processInput(void) {
 }
 
 bool CmdInterpreter::isPressed(const int key) {
-	const int pressed = 0x800;
-	return GetKeyState(key) & 0x800;
+	const int pressed = 0x800; 
+
+	//check if the high-order bit is set as well as the key being pressed
+	return GetKeyState(key) & 0x800; 
 }

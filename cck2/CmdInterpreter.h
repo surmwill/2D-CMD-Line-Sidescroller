@@ -8,10 +8,11 @@ class CmdInterpreter
 	World world;
 
 	void processInput(void);
-	bool isPressed(const int key);
 
 public:
 	CmdInterpreter(std::istream * input = nullptr);
 	~CmdInterpreter();
+
+	bool isPressed(const int key);
 };
 
