@@ -14,14 +14,11 @@ class Level {
 protected:
 	Level(const Coordinate playerStart);
 
-	//every level has a position where the player starts at
-	const Coordinate playerStart;
-
 	//every level has a set of enemies
 	std::vector <Enemy> enemies;
 
-	//every level has a unique set of tiles representing enemies
-	std::vector <char> enemyTiles{};
+	//every level has a position where the player starts at
+	const Coordinate playerStart;
 
 public:
 	virtual ~Level() = default;

@@ -5,5 +5,4 @@
 using std::vector;
 
 struct LevelOneImpl {
-	vector <char> enemyTiles{};
 };

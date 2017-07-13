@@ -5,12 +5,17 @@
 using std::make_unique;
 using std::shared_ptr;
 using std::string;
+using std::move;
 
 shared_ptr <Observer> Enemy::map = nullptr;
 
 Enemy::Enemy(const Coordinate & origin, const char tile) :
 	enemyImpl(make_unique <EnemyImpl>(origin, tile)) {
 
+}
+
+Enemy::Enemy(Enemy && otherEnemy) {
+	this->enemyImpl = move(otherEnemy.enemyImpl);
 }
 
 Enemy::~Enemy(void) {};
