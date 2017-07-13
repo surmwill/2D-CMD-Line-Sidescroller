@@ -37,11 +37,11 @@ Display::Display(unique_ptr <DisplayCommands> cmd): displayImpl(make_unique <Dis
 	drawUI();
 	clearDialogue();
 
-	drawDialogue("sabrina", "hey", true);
-	drawDialogue("will", "01234567890 1234567890 1234567890 1234567890 1234567890 12345678904 ad dsa gred frefre fwedew 01234567890 1234567890 12 frefre fwedew 01234567890 1234567890 12 frefre fwedew 01234567890 1234567890 12 frefre fwedew 01234567890 1234567890 12 frefre fwedew 01234567890 1234567890 12");
-	//drawDialogue("will", "hi");
-	//drawDialogue("sabrina", "hey");
-	//drawDialogue("tom", "yo");
+	/* drawDialogue("sabrina", "hey");
+	drawDialogue("will", "01234567890 1234567890 1234567890 1234567890 1234567890 12345678904 ad dsa gred frefre fwedew 01234567890 1234567890 12 frefre fwedew 01234567890 1234567890 12 frefre fwedew 01234567890 1234567890 12 frefre fwedew 01234567890 1234567890 12 frefre fwedew 01234567890 1234567890 12 1234567890 12");
+	drawDialogue("will", "hi hi hi h ih ih ih ih hi hihi hi hiih ih hiih ih ih hi ihih ");
+	drawDialogue("sabrina", "hey");
+	drawDialogue("tom", "yo", true); */
 }
 
 Display::~Display() {}
@@ -314,7 +314,7 @@ void Display::drawMap(vector <vector <char>> & newTiles) {
 void Display::drawUI(void) {
 	/* start drawing the line after the bottom of the map. The map is in charge
 	of updating it's own section of the display */
-	setNextDrawPosition(displayImpl->uiStarts, 0);
+	setNextDrawPosition(displayImpl->uiStarts);
 
 	writeConsole(' ', displayImpl->consoleWidth); //draw a line of blank spaces for clarity
 	writeConsole('~', displayImpl->consoleWidth); //draw a line of '~' to section off the menu
@@ -330,39 +330,40 @@ void Display::drawUI(void) {
 next draw position to the first line of the dialogue section */
 void Display::clearDialogue(void) {
 	// start at the beginning of where dialogue is drawn
-	setNextDrawPosition(displayImpl->dialogueStarts, 0);
+	setNextDrawPosition(displayImpl->dialogueStarts);
 
-	const int numRows = displayImpl->consoleHeight - displayImpl->dialogueStarts;
+	const int numRows = displayImpl->currentDialogueLine - displayImpl->dialogueStarts;
 	const int numWrites = numRows * displayImpl->consoleWidth;
 
 	//clear the entire dialogue section
 	writeConsole(' ', numWrites);
 
 	// our next draw position is at the beginning of where dialogue is drawn
-	setNextDrawPosition(displayImpl->dialogueStarts, 0);
+	setNextDrawPosition(displayImpl->dialogueStarts);
 	displayImpl->currentDialogueLine = displayImpl->dialogueStarts;
 }
 
-/* Displays the dialogue on the bottom the screen. We have 4 lines for dialogue so
-the line parameter can be set to {0, 1, 2, 3} */
+/* Clears previous dialogue, displays the new dialogue on the bottom the screen,
+waits for a space press */
 void Display::drawDialogue(
 	const string & name, 
 	const string & dialogue,
 	bool finalDialogue,
 	bool slowType) {
+	// clear previous dialogue
+	clearDialogue();
+
+	// the text to be displayed
 	string toWrite;
+
 	if(name != "") toWrite = name + ": " + dialogue; // ": " is Appended after a name to pretty print the dialogue
-	// Otherwise, if no name is provided there is no need to format anything
+	else toWrite = dialogue; // Otherwise, there is no need to format anything
 
 	int nextLineBreak = displayImpl->consoleWidth; // The character that needs to be a space in it's respected line
 	unsigned int lineBreak = nextLineBreak; // The actual character we are testing to see if it's a space. unsigned b/c I don't like warnings
 
 	// additional spaces may be padded so a word is not split between 2 lines
 	int spacesNeeded = 0;
-
-	// The amount of space left (not covered by previous dialogue) that is availible for the current dialogue to fill
-	const unsigned int spaceLeft = (displayImpl->consoleHeight - displayImpl->currentDialogueLine) *
-		displayImpl->consoleWidth;
 
 	while (toWrite.length() > lineBreak) {
 		/* If the current dialogue toWrite (with formatted spaces) is longer 
@@ -371,17 +372,6 @@ void Display::drawDialogue(
 			toWrite = "TEXT ERROR: formatted dialogue length is: " + to_string(toWrite.length())
 				+ " characters, the maximum length it  can be is: " + to_string(displayImpl->maxDialogueLength) 
 				+ " characters.";
-			break;
-		}
-		/* If the current dialogue toWrite (with formatted spaces) is longer 
-		than what can be drawn on the current screen (which may contain previous dialogue), 
-		wait for the player to press space to continue the dialogue so they don't miss
-		anything */
-		else if (toWrite.length() > spaceLeft) {
-			displayImpl->currentDialogueLine = displayImpl->consoleHeight - 1; // print the message on the bottom of the screen
-			/* The message takes up one line, pushing our currentDialogue line equal to the console height (calculated later in this fn)
-			which triggers the "press space to continue" */
-			toWrite = "Press space to continue reading... "; 
 			break;
 		}
 	
@@ -416,29 +406,24 @@ void Display::drawDialogue(
 		nextLineBreak += displayImpl->consoleWidth;
 		lineBreak = nextLineBreak;
 	}
-
+	
 	// the 2 double casts are neeeded to avoid the truncating of the division before ceil()
 	const int linesNeeded = static_cast <int> (ceil(
 		static_cast <double> (toWrite.length()) / static_cast <double> (displayImpl->consoleWidth)));
-
-	// -1 b/c currentDialogueLine is empty and avalible for writing
-	if (displayImpl->currentDialogueLine - 1 + linesNeeded >= displayImpl->consoleHeight) clearDialogue();
-	else setNextDrawPosition(displayImpl->currentDialogueLine, 0);
 	
-	// adjust where the next empty line for dialgoue drawing is
+	// adjust where the next empty line for dialgoue drawing is, so we know how many lines to clear in clearDialogue()
 	displayImpl->currentDialogueLine += linesNeeded;
 
 	// draw the dialogue
 	writeStringToConsole(toWrite, slowType);
 
-	/* If the current dialogue box is filled or it is the final part of
-	the conversation wait for the user to press space to clear the dialogue box */
-	if (finalDialogue || displayImpl->currentDialogueLine >= displayImpl->consoleHeight) {
-		//while(!displayImpl->cmd->spacePressed()) {}
-	}
-	
-	// next steps: pass cmdInterpreter to display so when there is too much text they have to press a key
-	// to clear the rpevious text and display the new one.
+	// short dialogue gets drawn so quickly that one space press may skip multiple short lines of dialogue. Add a slight pause so this doesn't happen
+	if(static_cast <int> (toWrite.length()) < displayImpl->consoleWidth) Sleep(100);
+
+	/* What for the player to press space before printing further dialogue */
+	while (!displayImpl->cmd->spacePressed()) {}
+
+	if (finalDialogue) clearDialogue(); // we don't want the last peice of dialogue to sit on the screen forever
 }
 
 /* Sets the cursor position which corresponds to the next place a character is drawn */

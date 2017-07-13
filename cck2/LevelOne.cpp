@@ -44,6 +44,7 @@ void LevelOne::findEnemies(void) {
 	string dummy;
 	char tile;
 	Coordinate origin;
+	vector <Enemy> en;
 
 	while (getline(ifs, line)) {
 		stringstream ss{ line };
@@ -55,9 +56,9 @@ void LevelOne::findEnemies(void) {
 		ss >> dummy; //read y: (unimportant so store in dummy)
 		ss >> origin.y; //read y-coordinate '35'
 
-		Enemy e{ origin, tile };
+		enemies.emplace_back(origin, tile);
 
 		//construct the enemy
-		//enemies.emplace_back(origin, tile);
+		//enemies.emplace_back(e);
 	}
 }

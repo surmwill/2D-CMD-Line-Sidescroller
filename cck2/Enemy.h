@@ -14,6 +14,7 @@ public:
 	static std::shared_ptr <Observer> map;
 
 	Enemy(const Coordinate & origin, const char tile);
+	Enemy(Enemy && otherEnemy);
 	virtual ~Enemy();
 
 	virtual void moveLeft(void) override;
