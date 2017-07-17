@@ -53,6 +53,10 @@ void CmdInterpreter::processInput(void) {
 			}
 		}
 
+		/* Regardless of input, make sure the world is properly animated. For 
+		example: enemies should still patrol if the player chooses to not press anything */
+		world.animateWorld();
+
 	}
 }
 

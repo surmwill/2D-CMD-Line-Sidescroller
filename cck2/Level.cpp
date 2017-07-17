@@ -9,3 +9,9 @@ shared_ptr <Map> Level::map = nullptr;
 Level::Level(const Coordinate playerStart) :
 	playerStart(playerStart) {
 }
+
+void Level::moveEnemies(void) {
+	for (auto & enemy : enemies) {
+		enemy->patrol();
+	}
+}

@@ -78,3 +78,8 @@ World & World::movePlayer(const int direction) {
 	}
 	return *this;
 }
+
+void World::animateWorld(void) {
+	// make enemies continually patrol the map
+	worldImpl->level->moveEnemies();
+}
