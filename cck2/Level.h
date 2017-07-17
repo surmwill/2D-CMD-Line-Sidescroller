@@ -15,7 +15,7 @@ protected:
 	Level(const Coordinate playerStart);
 
 	//every level has a set of enemies
-	std::vector <Enemy> enemies;
+	std::vector <std::unique_ptr <Enemy>> enemies;
 
 	//every level has a position where the player starts at
 	const Coordinate playerStart;
@@ -29,5 +29,8 @@ public:
 
 	//every level has acess to the same map class
 	static std::shared_ptr <Map> map;
+
+	//enemies will be continually moving around the map
+	void moveEnemies(void);
 };
 

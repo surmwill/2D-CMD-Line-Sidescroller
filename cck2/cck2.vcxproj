@@ -147,6 +147,7 @@
     <ClCompile Include="Display.cpp" />
     <ClCompile Include="Enemy.cpp" />
     <ClCompile Include="Equipment.cpp" />
+    <ClCompile Include="Follower.cpp" />
     <ClCompile Include="Fstream.cpp" />
     <ClCompile Include="Level.cpp" />
     <ClCompile Include="LevelOne.cpp" />
@@ -155,6 +156,7 @@
     <ClCompile Include="Observer.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="Subject.cpp" />
+    <ClCompile Include="TalDoonCultist.cpp" />
     <ClCompile Include="Weapon.cpp" />
     <ClCompile Include="World.cpp" />
   </ItemGroup>
@@ -171,8 +173,9 @@
     <ClInclude Include="DisplayedMap.h" />
     <ClInclude Include="DisplayImpl.h" />
     <ClInclude Include="Enemy.h" />
-    <ClInclude Include="EnemyImpl.h" />
+    <ClInclude Include="EnemyConstructor.h" />
     <ClInclude Include="Equipment.h" />
+    <ClInclude Include="Follower.h" />
     <ClInclude Include="Fstream.h" />
     <ClInclude Include="Iostream.h" />
     <ClInclude Include="Level.h" />
@@ -186,6 +189,7 @@
     <ClInclude Include="PlayerImpl.h" />
     <ClInclude Include="Statistics.h" />
     <ClInclude Include="Subject.h" />
+    <ClInclude Include="TalDoonCultist.h" />
     <ClInclude Include="Tile.h" />
     <ClInclude Include="Weapon.h" />
     <ClInclude Include="World.h" />

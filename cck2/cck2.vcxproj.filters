@@ -69,6 +69,12 @@
     <ClCompile Include="Armour.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Follower.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TalDoonCultist.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Map.h">
@@ -152,9 +158,6 @@
     <ClInclude Include="LevelOneImpl.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="EnemyImpl.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Dialogue.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -162,6 +165,15 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="DisplayCommands.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Follower.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="EnemyConstructor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TalDoonCultist.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -56,7 +56,7 @@ void LevelOne::findEnemies(void) {
 		ss >> dummy; //read y: (unimportant so store in dummy)
 		ss >> origin.y; //read y-coordinate '35'
 
-		enemies.emplace_back(origin, tile);
+		enemies.emplace_back(std::make_unique <Enemy> (origin, tile, 1, 2));
 
 		//construct the enemy
 		//enemies.emplace_back(e);
