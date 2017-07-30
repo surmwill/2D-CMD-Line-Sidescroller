@@ -9,13 +9,15 @@ using std::move;
 shared_ptr <Observer> Enemy::map = nullptr;
 
 Enemy::Enemy(
-	const Coordinate & origin,
 	const char tile,
-	const int aggroRange,
+	const int aggroRange, 
 	const int threat) : 
-	position(origin), tile(tile), aggroRange(aggroRange), threat(threat) {
+	tile{ tile },
+	aggroRange{ aggroRange }, 
+	threat{ threat } {}
 
-}
+// Spawns an enemy at a specific position on the map
+void Enemy::spawn(const Coordinate & origin) { this->position = origin; }
 
 Enemy::~Enemy(void) {};
 

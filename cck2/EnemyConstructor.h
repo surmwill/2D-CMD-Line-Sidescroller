@@ -5,19 +5,20 @@
 #include "TalDoonCultist.h"
 #include "Coordinate.h"
 #include <map>
+#include <functional>
 
-//ToDo make Enemy have no paramters to construct, when we search for an enemy in the map we return the enemy, then call
-//a seperate enemy function as a secondary costructor to set the origin, tile, and aggro range/threat
-//we need to do this b/c we need to intialize the map ahead of time which makes it impossible to set the varyign origins
 class EnemyConstructor {
-	std::map < std::string, std::unique_ptr <Enemy>(*) (const Coordinate &, const char)> enemyMap;
-
-	template <typename T> std::unique_ptr <Enemy> createEnemyInstance(const Coordinate & origin, const char tile) {
-		return std::make_unique <T>(origin, tile);
-	}
+	/* Store how to construct each Enemy in a dictionary. By searching an enemy type
+	we call a function pointer which returns the corresponding enemy's class */
+	std::map < std::string, std::function<std::unique_ptr <Enemy> ()>> enemyMap;
 
 public:
 	EnemyConstructor(void) {
-		enemyMap.emplace("Tal'Doon Cultist", &createEnemyInstance)
+		// compiler does strong type checking to ensure the return type of the lambda is an Enemy
+		enemyMap["Tal'Doon Cultist"] = []() {return std::make_unique <TalDoonCultist>(); };
+	}
+
+	std::unique_ptr <Enemy> construct(const std::string & enemyType, const Coordinate & origin) {
+		return (enemyMap.find(enemyType)->second)();
 	}
 };

@@ -12,6 +12,7 @@ using std::ifstream;
 using std::getline;
 using std::string;
 using std::stringstream;
+using std::move;
 
 LevelOne::LevelOne() : 
 	Level{ Coordinate{1,1} },
@@ -56,7 +57,10 @@ void LevelOne::findEnemies(void) {
 		ss >> dummy; //read y: (unimportant so store in dummy)
 		ss >> origin.y; //read y-coordinate '35'
 
-		enemies.emplace_back(std::make_unique <Enemy> (origin, tile, 1, 2));
+		auto e = move(enemyConstructor.construct("Tal'Doon Cultist", Coordinate{ 1, 1 }));
+		//e->giveDialogue("testt");
+		Debug::write("ran");
+		//enemies.emplace_back(std::make_unique <Enemy> (origin, tile, 1, 2));
 
 		//construct the enemy
 		//enemies.emplace_back(e);
