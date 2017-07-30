@@ -1,15 +1,12 @@
 #include "TalDoonCultist.h"
 #include "Coordinate.h"
+#include "Debug.h"
 
 using std::string;
 
-const int TalDoonCultist_aggroRange = 10;
-const int TalDoonCultist_threat = 10;
-
-TalDoonCultist::TalDoonCultist(const Coordinate & origin, const char tile) : 
-	Enemy(origin, tile, TalDoonCultist_aggroRange, TalDoonCultist_threat) {
+TalDoonCultist::TalDoonCultist(void) : 
+	Enemy('T', 10, 0) {
 }
-
 
 TalDoonCultist::~TalDoonCultist()
 {
@@ -24,7 +21,7 @@ void TalDoonCultist::moveUp(void) {}
 void TalDoonCultist::moveDown(void) {}
 
 void TalDoonCultist::giveDialogue(const string & text) {
-
+	Debug::write(text);
 }
 
 void TalDoonCultist::patrol(void) {

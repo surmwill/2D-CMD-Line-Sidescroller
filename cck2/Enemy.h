@@ -11,6 +11,7 @@ struct Coordinate;
 class Enemy : public Combatent {
 protected:
 	Coordinate position;
+
 	const char tile;
 
 	// distance the enemy will notice you
@@ -19,16 +20,17 @@ protected:
 	// determines how aggresive the enemy is (high threat means the enemy will attack on site)
 	const int threat; 
 
+	Enemy(
+		const char tile,
+		const int aggroRange,
+		const int threat);
+
 public:
 	static std::shared_ptr <Observer> map;
 
-	Enemy(
-		const Coordinate & origin, 
-		const char tile, 
-		const int aggroRange,
-		const int threath);
-
 	virtual ~Enemy();
+
+	void spawn(const Coordinate & origin);
 
 	/* Overwrites from combatent */
 	virtual void moveLeft(void) override;

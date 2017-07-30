@@ -6,7 +6,7 @@
 class TalDoonCultist : public Enemy {
 
 public:
-	TalDoonCultist(const Coordinate & origin, const char tile);
+	TalDoonCultist(void);
 	virtual ~TalDoonCultist();
 
 	/* Overwrites from Enemy */

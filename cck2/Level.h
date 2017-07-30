@@ -5,6 +5,7 @@
 #include "Map.h"
 #include "Enemy.h"
 #include <string>
+#include "EnemyConstructor.h"
 
 class Observer;
 
@@ -19,6 +20,8 @@ protected:
 
 	//every level has a position where the player starts at
 	const Coordinate playerStart;
+
+	EnemyConstructor enemyConstructor;
 
 public:
 	virtual ~Level() = default;
