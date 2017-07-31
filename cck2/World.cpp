@@ -32,6 +32,8 @@ World::World(CmdInterpreter * const cmd) : worldImpl(make_unique <WorldImpl> ())
 	passing the display but with less access to public functions */
 	auto displayedMap = make_unique <DisplayedMap>(worldImpl->display.get());
 
+	//test commit
+
 	/* Create a new map object which has yet to load a level. The
 	display is the map's observer */
 	Observer * map = new Map(move(displayedMap));
