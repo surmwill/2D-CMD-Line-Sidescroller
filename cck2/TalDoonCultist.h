@@ -10,10 +10,10 @@ public:
 	virtual ~TalDoonCultist();
 
 	/* Overwrites from Enemy */
-	virtual void moveLeft(void) override;
-	virtual void moveRight(void) override;
-	virtual void moveUp(void) override;
-	virtual void moveDown(void) override;
+	virtual Coordinate & moveLeft(void) override;
+	virtual Coordinate & moveRight(void) override;
+	virtual Coordinate & moveUp(void) override;
+	virtual Coordinate & moveDown(void) override;
 
 	virtual void giveDialogue(const std::string & text) override;
 	virtual void patrol(void) override;

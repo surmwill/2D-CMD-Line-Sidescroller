@@ -5,6 +5,7 @@
 #include "Display.h"
 #include "Enemy.h"
 #include "Combatent.h"
+#include "Coordinate.h"
 #include "DisplayedMap.h"
 #include "CmdInterpreter.h"
 #include "DisplayCommands.h"
@@ -42,12 +43,8 @@ World::World(CmdInterpreter * const cmd) : worldImpl(make_unique <WorldImpl> ())
 	in order to update the display with enemy movements */
 	Enemy::map = map;
 
-	/* Every Level and Enemy subclass has access to the map object.
-	Note that noDelete prevents deletion of map pointer through the
-	shared_ptr reset method so we can still pass the map as one of the
-	player's observers */
-	auto noDelete = [](Observer*) {};//
-	//Level::map.reset(dynamic_cast <Map *> (map), noDelete);
+	/* Every Level has access to the map object. The Level owns the map
+	and will thus be responsible for it's destruction */
 	Level::map.reset(dynamic_cast <Map *> (map));
 	//Enemy::map.reset(map, noDelete); //map is passed as an observer here
 
@@ -61,8 +58,8 @@ World::World(CmdInterpreter * const cmd) : worldImpl(make_unique <WorldImpl> ())
 	combat class by aggroing the enemy in the game. Pass through level? */
 
 	// Spawn the player and pass the map as one of the player's observers
+	// Note static_cast up, and dynamic_cast down
 	worldImpl->player = make_unique <Player>(map, worldImpl->level->getPlayerStart());
-	//worldImpl->player = dynamic_cast <Player *> (worldImpl->playerInCombat.get());
 	worldImpl->playerInCombat = static_cast <Combatent *> (worldImpl->player.get());
 }
 
@@ -70,20 +67,28 @@ World::World(CmdInterpreter * const cmd) : worldImpl(make_unique <WorldImpl> ())
 World::~World() {}
 
 World & World::movePlayer(const int direction) {
+	//cant use references because of multiple intialization of the same name in the switch statement
+	Coordinate * playerPosition;
+
 	switch (direction) {
 	case VK_LEFT:
-		worldImpl->player->moveLeft();
+		playerPosition = &worldImpl->player->moveLeft();
 		break;
 	case VK_RIGHT:
-		worldImpl->player->moveRight();
+		playerPosition = &worldImpl->player->moveRight();
 		break;
 	case VK_UP:
-		worldImpl->player->moveUp();
+		playerPosition = &worldImpl->player->moveUp();
 		break;
 	case VK_DOWN:
-		worldImpl->player->moveDown();
+		playerPosition = &worldImpl->player->moveDown();
 		break;
 	}
+
+	if (worldImpl->level->enemiesAggrod(*playerPosition).size() > 0) {
+		// engage in combat with the enemies
+	}
+
 	return *this;
 }
 

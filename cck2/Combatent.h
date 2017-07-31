@@ -1,5 +1,6 @@
 #pragma once
 #include <string>
+#include "Coordinate.h"
 
 class Player;
 
@@ -9,10 +10,10 @@ public:
 	Combatent();
 	~Combatent();
 
-	virtual void moveLeft(void) = 0;
-	virtual void moveRight(void) = 0;
-	virtual void moveUp(void) = 0;
-	virtual void moveDown(void) = 0;
+	virtual Coordinate & moveLeft(void) = 0;
+	virtual Coordinate & moveRight(void) = 0;
+	virtual Coordinate & moveUp(void) = 0;
+	virtual Coordinate & moveDown(void) = 0;
 
 	virtual void giveDialogue(const std::string & text) = 0;
 };

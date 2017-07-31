@@ -17,10 +17,10 @@ public:
 	Player(Observer * const map, const Coordinate playerStart);
 	~Player();
 
-	void moveLeft(void) override;
-	void moveRight(void) override;
-	void moveUp(void) override;
-	void moveDown(void) override;
+	Coordinate & moveLeft(void) override;
+	Coordinate & moveRight(void) override;
+	Coordinate & moveUp(void) override;
+	Coordinate & moveDown(void) override;
 
 	void giveDialogue(const std::string & text) override;
 };

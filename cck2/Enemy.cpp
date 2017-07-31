@@ -23,13 +23,21 @@ void Enemy::spawn(const Coordinate & origin) { this->position = origin; }
 
 Enemy::~Enemy(void) {};
 
-void Enemy::moveLeft(void) {}
+Coordinate & Enemy::moveLeft(void) {
+	return position;
+}
 
-void Enemy::moveRight(void) {}
+Coordinate & Enemy::moveRight(void) {
+	return position;
+}
 
-void Enemy::moveUp(void) {}
+Coordinate & Enemy::moveUp(void) {
+	return position;
+}
 
-void Enemy::moveDown(void) {}
+Coordinate & Enemy::moveDown(void) {
+	return position;
+}
 
 void Enemy::giveDialogue(const string & text) {
 
@@ -37,4 +45,8 @@ void Enemy::giveDialogue(const string & text) {
 
 void Enemy::patrol(void) {
 
+}
+
+bool Enemy::aggrod(const Coordinate & playerPosition) {
+	return true;
 }

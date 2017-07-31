@@ -32,12 +32,13 @@ public:
 	virtual ~Enemy();
 
 	void spawn(const Coordinate & origin);
+	bool aggrod(const Coordinate & playerPosition);
 
 	/* Overwrites from combatent */
-	virtual void moveLeft(void) override;
-	virtual void moveRight(void) override;
-	virtual void moveUp(void) override;
-	virtual void moveDown(void) override;
+	virtual Coordinate & moveLeft(void) override;
+	virtual Coordinate & moveRight(void) override;
+	virtual Coordinate & moveUp(void) override;
+	virtual Coordinate & moveDown(void) override;
 
 	virtual void giveDialogue(const std::string & text) override;
 	/* End of overwrites from combatent */
