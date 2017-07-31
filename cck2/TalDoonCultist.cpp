@@ -12,13 +12,21 @@ TalDoonCultist::~TalDoonCultist()
 {
 }
 
-void TalDoonCultist::moveLeft(void) {}
+Coordinate & TalDoonCultist::moveLeft(void) {
+	return position;
+}
 
-void TalDoonCultist::moveRight(void) {}
+Coordinate & TalDoonCultist::moveRight(void) {
+	return position;
+}
 
-void TalDoonCultist::moveUp(void) {}
+Coordinate & TalDoonCultist::moveUp(void) {
+	return position;
+}
 
-void TalDoonCultist::moveDown(void) {}
+Coordinate & TalDoonCultist::moveDown(void) {
+	return position;
+}
 
 void TalDoonCultist::giveDialogue(const string & text) {
 	Debug::write(std::to_string(position.x));

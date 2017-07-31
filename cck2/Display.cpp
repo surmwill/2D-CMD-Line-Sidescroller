@@ -221,7 +221,7 @@ void Display::drawMap(vector <vector <char>> & newTiles) {
 		/* Special case: If the visible area is smaller than the entire screen (height wise) which 
 		newTiles covers, populate the rows of the map we cannot see with spaces */
 		if (i >= newTiles.size()) {
-			const int rows = displayImpl->prevDisplay.size() - newTiles.size();
+			const int rows = static_cast <int> (displayImpl->prevDisplay.size() - newTiles.size());
 			const int numSpaces = rows * displayImpl->consoleWidth;
 
 			/* If spaces are already in the buffer simply add on to the number of
@@ -249,7 +249,7 @@ void Display::drawMap(vector <vector <char>> & newTiles) {
 			/* Special case: If the visible area is smaller than the entire screen (width wise), 
 			populate the columns at the end of the row with spaces*/
 			if (j >= newTiles[0].size()) {
-				int numSpaces = displayImpl->prevDisplay[0].size() - newTiles[0].size();
+				int numSpaces = static_cast <int> (displayImpl->prevDisplay[0].size() - newTiles[0].size());
 
 				if (toWrite == ' ') numWrites += numSpaces; 
 				else { 
