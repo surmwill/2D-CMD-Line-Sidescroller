@@ -4,8 +4,8 @@
 
 using std::string;
 
-TalDoonCultist::TalDoonCultist(void) : 
-	Enemy('T', 10, 0) {
+TalDoonCultist::TalDoonCultist(const Coordinate & origin) : 
+	Enemy(origin, 'T', 10, 0) {
 }
 
 TalDoonCultist::~TalDoonCultist()
@@ -21,7 +21,7 @@ void TalDoonCultist::moveUp(void) {}
 void TalDoonCultist::moveDown(void) {}
 
 void TalDoonCultist::giveDialogue(const string & text) {
-	Debug::write(text);
+	Debug::write(std::to_string(position.x));
 }
 
 void TalDoonCultist::patrol(void) {

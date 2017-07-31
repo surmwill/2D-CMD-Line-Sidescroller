@@ -21,12 +21,13 @@ protected:
 	const int threat; 
 
 	Enemy(
+		const Coordinate & origin,
 		const char tile,
 		const int aggroRange,
 		const int threat);
 
 public:
-	static std::shared_ptr <Observer> map;
+	static Observer * map;
 
 	virtual ~Enemy();
 

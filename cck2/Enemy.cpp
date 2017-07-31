@@ -6,12 +6,14 @@ using std::shared_ptr;
 using std::string;
 using std::move;
 
-shared_ptr <Observer> Enemy::map = nullptr;
+Observer * Enemy::map;
 
 Enemy::Enemy(
+	const Coordinate & origin,
 	const char tile,
 	const int aggroRange, 
 	const int threat) : 
+	position { origin },
 	tile{ tile },
 	aggroRange{ aggroRange }, 
 	threat{ threat } {}

@@ -28,20 +28,26 @@ World::World(CmdInterpreter * const cmd) : worldImpl(make_unique <WorldImpl> ())
 
 	worldImpl->display = make_unique <Display>(move(displayCmd));
 
-	//Restricts the map's access to the display's public functions
+	/* Restricts the map's access to the display's public functions. Similar to 
+	passing the display but with less access to public functions */
 	auto displayedMap = make_unique <DisplayedMap>(worldImpl->display.get());
 
 	/* Create a new map object which has yet to load a level. The
 	display is the map's observer */
 	Observer * map = new Map(move(displayedMap));
 
+	/* Every Enemy and Enemy subclass has acess to the (Observer) Map object
+	in order to update the display with enemy movements */
+	Enemy::map = map;
+
 	/* Every Level and Enemy subclass has access to the map object.
 	Note that noDelete prevents deletion of map pointer through the
 	shared_ptr reset method so we can still pass the map as one of the
 	player's observers */
-	auto noDelete = [](Observer*) {};
-	Level::map.reset(dynamic_cast <Map *> (map), noDelete);
-	Enemy::map.reset(map, noDelete); //map is passed as an observer here
+	auto noDelete = [](Observer*) {};//
+	//Level::map.reset(dynamic_cast <Map *> (map), noDelete);
+	Level::map.reset(dynamic_cast <Map *> (map));
+	//Enemy::map.reset(map, noDelete); //map is passed as an observer here
 
 	/* Start at level one */
 	worldImpl->level = make_unique <LevelOne>();
