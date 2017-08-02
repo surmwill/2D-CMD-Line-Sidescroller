@@ -8,6 +8,12 @@ Combat::Combat(
 
 }
 
+Combat::Combat(
+	Combatent * const player,
+	vector <Combatent *> enemies) {
+
+}
+
 
 Combat::~Combat()
 {

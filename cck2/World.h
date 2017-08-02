@@ -1,5 +1,7 @@
 #pragma once
 #include <memory>
+#include <vector>
+#include "Combatent.h"
 #include "Player.h"
 
 class Level;
@@ -12,6 +14,8 @@ public:
 	~World();
 
 	World & movePlayer(const int direction);
+
+	void startCombat(std::vector <Combatent *> enemies);
 
 	// moves enemies, perhaps part of the level moves if it is affected by magic
 	void animateWorld(void);

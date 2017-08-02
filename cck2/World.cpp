@@ -60,7 +60,7 @@ World::World(CmdInterpreter * const cmd) : worldImpl(make_unique <WorldImpl> ())
 	// Spawn the player and pass the map as one of the player's observers
 	// Note static_cast up, and dynamic_cast down
 	worldImpl->player = make_unique <Player>(map, worldImpl->level->getPlayerStart());
-	worldImpl->playerInCombat = static_cast <Combatent *> (worldImpl->player.get());
+	//worldImpl->playerInCombat = static_cast <Combatent *> (worldImpl->player.get());
 }
 
 
@@ -85,7 +85,7 @@ World & World::movePlayer(const int direction) {
 		break;
 	}
 
-	if (worldImpl->level->enemiesAggrod(*playerPosition).size() > 0) {
+	if (!worldImpl->level->enemiesAggrod(*playerPosition).empty()) {
 		// engage in combat with the enemies
 	}
 
@@ -95,4 +95,8 @@ World & World::movePlayer(const int direction) {
 void World::animateWorld(void) {
 	// make enemies continually patrol the map
 	worldImpl->level->moveEnemies();
+}
+
+void World::startCombat(std::vector <Combatent *> enemies) {
+
 }

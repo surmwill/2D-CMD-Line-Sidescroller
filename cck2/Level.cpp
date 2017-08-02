@@ -17,7 +17,7 @@ void Level::moveEnemies(void) {
 	}
 }
 
-vector <Enemy *> Level::enemiesAggrod(const Coordinate & playerPosition) {
+vector <Combatent *> Level::enemiesAggrod(const Coordinate & playerPosition) {
 	// vector of enemies that are aggrod who want to engage in combat with the player
 	vector <Enemy *> enemiesAggrod;
 
@@ -29,5 +29,6 @@ vector <Enemy *> Level::enemiesAggrod(const Coordinate & playerPosition) {
 		}
 	}
 
+	//cast to combatents
 	return enemiesAggrod;
 }
