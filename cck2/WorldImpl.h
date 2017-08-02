@@ -13,5 +13,4 @@ struct WorldImpl {
 	std::unique_ptr <Level> level;
 	std::unique_ptr <Display> display;
 	std::unique_ptr <Player> player;
-	Combatent * playerInCombat;
 };
