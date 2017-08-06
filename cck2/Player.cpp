@@ -74,6 +74,14 @@ Coordinate & Player::moveDown(void) {
 	return playerImpl->position;
 }
 
-void Player::giveDialogue(const string & text) {
+Coordinate & Player::position(void) {
+	return playerImpl->position;
+}
 
+void Player::giveDialogue(const string & text) {
+	Debug::write("player checked");
+}
+
+void Player::takeTurn(void) {
+	giveDialogue(" ");
 }

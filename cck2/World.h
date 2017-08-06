@@ -3,6 +3,7 @@
 #include <vector>
 #include "Combatent.h"
 #include "Player.h"
+#include "Coordinate.h"
 
 class Level;
 class CmdInterpreter;
@@ -15,7 +16,7 @@ public:
 
 	World & movePlayer(const int direction);
 
-	void startCombat(std::vector <Combatent *> enemies);
+	void combatPhase(void);
 
 	// moves enemies, perhaps part of the level moves if it is affected by magic
 	void animateWorld(void);
