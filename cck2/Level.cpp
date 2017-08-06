@@ -19,13 +19,13 @@ void Level::moveEnemies(void) {
 
 vector <Combatent *> Level::enemiesAggrod(const Coordinate & playerPosition) {
 	// vector of enemies that are aggrod who want to engage in combat with the player
-	vector <Enemy *> enemiesAggrod;
+	vector <Combatent *> enemiesAggrod;
 
 	/* Go through the list of all enemies in the level, and see which
 	ones are close enough to the player to be aggrod*/
 	for (auto & enemy : enemies) {
 		if (enemy->aggrod(playerPosition)) {
-			enemiesAggrod.push_back(enemy.get());
+			enemiesAggrod.push_back(static_cast <Combatent*> (enemy.get()));
 		}
 	}
 

@@ -17,6 +17,7 @@ public:
 
 	virtual void giveDialogue(const std::string & text) override;
 	virtual void patrol(void) override;
+	virtual void takeTurn(void) override;
 	/* End of overwrites from combatent */
 
 };

@@ -10,3 +10,7 @@ Combatent::Combatent()
 Combatent::~Combatent()
 {
 }
+
+bool Combatent::isDead(void) {
+	return false;
+}

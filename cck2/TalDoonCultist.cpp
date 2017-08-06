@@ -29,9 +29,13 @@ Coordinate & TalDoonCultist::moveDown(void) {
 }
 
 void TalDoonCultist::giveDialogue(const string & text) {
-	Debug::write(std::to_string(position.x));
+	Debug::write("Tal'Doon checked");
 }
 
 void TalDoonCultist::patrol(void) {
 
+}
+
+void TalDoonCultist::takeTurn(void) {
+	giveDialogue(" ");
 }

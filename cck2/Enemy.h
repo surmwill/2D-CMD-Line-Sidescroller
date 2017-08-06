@@ -41,6 +41,7 @@ public:
 	virtual Coordinate & moveDown(void) override;
 
 	virtual void giveDialogue(const std::string & text) override;
+	virtual void takeTurn(void) override = 0;
 	/* End of overwrites from combatent */
 
 	// Enemies will follow a specific patrol path
