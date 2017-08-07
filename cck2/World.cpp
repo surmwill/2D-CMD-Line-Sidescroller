@@ -100,10 +100,20 @@ void World::animateWorld(void) {
 }
 
 void World::combatPhase(void) {
+	// The number of enemies who want to fight
 	vector <Combatent *> enemies = worldImpl->level->enemiesAggrod(worldImpl->player->position());
 
+	// If there is more than one enemy wanting to fight, start the battle
 	if (!enemies.empty()) {
-		// engage in combat with the enemies
 		Combat battle{ static_cast <Combatent *> (worldImpl->player.get()), enemies };
+
+		// stop keeping track of the enemies and followers who died in battle
+		combatAftermath(battle);
 	}
+}
+
+//stop keeping track of enemies and followers that are dead
+void World::combatAftermath(Combat & battle) {
+	worldImpl->level->enemyCleanup(battle.reportDeadEnemies());
+	//player->followerCleanup(battle.reportDeadFriendlies()); soon....
 }

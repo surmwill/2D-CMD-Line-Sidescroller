@@ -1,5 +1,7 @@
 #pragma once
 #include <vector>
+#include "Follower.h"
+#include "Enemy.h"
 
 class Combatent;
 
@@ -7,6 +9,9 @@ class Combat
 {
 	std::vector <Combatent *> friendlies;
 	std::vector <Combatent *> enemies;
+	std::vector <Enemy *> deadEnemies;
+	std::vector <Follower *> deadFollowers;
+
 	Combatent * player;
 
 public:
@@ -22,6 +27,9 @@ public:
 	);
 
 	void nextStage(void);
+
+	std::vector <Enemy *> reportDeadEnemies(void);
+	//std::vector <Follower *> & reportDeadFollowers(void);
 
 	~Combat();
 };

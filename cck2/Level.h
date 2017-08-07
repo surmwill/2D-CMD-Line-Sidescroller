@@ -38,6 +38,8 @@ public:
 	//enemies will be continually moving around the map
 	void moveEnemies(void);
 
+	void enemyCleanup(const std::vector <Enemy *> & deceased);
+
 	//returns a vector of enemies who are close enough to the player to want to enagge in combat
 	std::vector <Combatent*> enemiesAggrod(const Coordinate & playerPosition);
 };

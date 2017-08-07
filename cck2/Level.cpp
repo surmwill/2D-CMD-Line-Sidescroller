@@ -32,3 +32,7 @@ vector <Combatent *> Level::enemiesAggrod(const Coordinate & playerPosition) {
 	//cast to combatents
 	return enemiesAggrod;
 }
+
+void Level::enemyCleanup(const vector <Enemy *> & deceased) {
+
+}

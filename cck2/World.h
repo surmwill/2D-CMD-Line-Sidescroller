@@ -4,6 +4,7 @@
 #include "Combatent.h"
 #include "Player.h"
 #include "Coordinate.h"
+#include "Combat.h"
 
 class Level;
 class CmdInterpreter;
@@ -17,6 +18,7 @@ public:
 	World & movePlayer(const int direction);
 
 	void combatPhase(void);
+	void combatAftermath(Combat & battle);
 
 	// moves enemies, perhaps part of the level moves if it is affected by magic
 	void animateWorld(void);
