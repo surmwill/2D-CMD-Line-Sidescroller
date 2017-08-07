@@ -147,6 +147,7 @@
     <ClCompile Include="Display.cpp" />
     <ClCompile Include="Enemy.cpp" />
     <ClCompile Include="Equipment.cpp" />
+    <ClCompile Include="Error.cpp" />
     <ClCompile Include="Follower.cpp" />
     <ClCompile Include="Fstream.cpp" />
     <ClCompile Include="Level.cpp" />
@@ -175,6 +176,7 @@
     <ClInclude Include="Enemy.h" />
     <ClInclude Include="EnemyConstructor.h" />
     <ClInclude Include="Equipment.h" />
+    <ClInclude Include="Error.h" />
     <ClInclude Include="Follower.h" />
     <ClInclude Include="Fstream.h" />
     <ClInclude Include="Iostream.h" />
