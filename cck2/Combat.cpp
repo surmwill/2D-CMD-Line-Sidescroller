@@ -11,15 +11,14 @@ using std::vector;
 using std::transform;
 using std::back_inserter;
 
-/* A functor used to safely dynamic cast one class to another,
+/* Used to safely dynamic cast one class to another,
 If the cast fails, an errow is thrown */
-template <typename From, typename To> struct dynamic_caster {
-	To * operator()(From * base) {
-		To * derived = dynamic_cast <To *> (base);
-		if (derived) return derived;
-		else throw Error("could not dynamic cast");
-	}
-};
+template <typename From, typename To> 
+To * dynamic_caster(From * base) {
+	To * derived = dynamic_cast <To *> (base);
+	if (derived) return derived;
+	else throw Error("could not dynamic cast");
+}
 
 Combat::Combat(
 	vector <Combatent *> & friendlies,
@@ -34,6 +33,7 @@ Combat::Combat(
 	vector <Combatent *> & enemies) : player{ player }, enemies{ enemies } {
 	//we assume that the majority of the time, the player will win the battle
 	deadEnemies.reserve(enemies.size());
+	nextStage();
 }
 
 
@@ -41,6 +41,8 @@ Combat::~Combat(){
 }
 
 void Combat::nextStage(void) {
+	bool victorious = true;
+
 	//check leadership stat to see who goes first
 	// for now... the player goes first
 	player->takeTurn();
@@ -54,12 +56,17 @@ void Combat::nextStage(void) {
 	for (auto enemyIt = enemies.begin(); enemyIt != enemies.end(); ++enemyIt) {
 		Combatent * enemy = *enemyIt;
 
-		enemy->takeTurn();
-		if (enemy->isDead()) {
-			enemies.erase(enemyIt); //remove the enemy from the list of enemies we need to fight
-			deadEnemies.push_back(dynamic_cast <Enemy *> (enemy)); //add the enemy to the list of enemies we are to delete from the level
-		}
+		if (enemy->isDead()) continue; // dead enemies can't do anything (except wait for a possible ressurection)
+		else enemy->takeTurn();
+
+		// while there is still an enemy remaining we haven't achieved victory
+		victorious = false;
 	}
+
+	Debug::write("victorius");
+
+	// or if the player succesfully flees the fight (add fn later)
+	if (victorious) return; 
 }
 
 std::vector <Enemy *> Combat::reportDeadEnemies(void) {
@@ -67,8 +74,22 @@ std::vector <Enemy *> Combat::reportDeadEnemies(void) {
 	vector <Enemy *> downcastEnemies;
 	downcastEnemies.reserve(enemies.size());
 
+	for (auto & enemy : enemies) {
+		if (enemy->isDead()) {
+			try {
+				downcastEnemies.push_back(dynamic_caster <Combatent, Enemy>(enemy));
+			}
+			catch (Error & error) {
+				Debug::write(error.getMessage());
+				throw;
+			}
+		}
+	}
+
+	Debug::write(downcastEnemies.size());
+
 	/* Fill our new downcasted Enemy array */
-	try {
+	/*try {
 		transform(
 			enemies.begin(),
 			enemies.end(),
@@ -77,8 +98,8 @@ std::vector <Enemy *> Combat::reportDeadEnemies(void) {
 	} // If a dynamic cast fails, catch the error and return nothing
 	catch (Error & badCast) {
 		Debug::write(badCast.getMessage());
-		return vector <Enemy *> {};
-	}
+		return vector <Enemy *> {}; 
+	} */
 
 	return downcastEnemies;
 }

@@ -39,7 +39,7 @@ int Fstream::firstLineLength(void) {
 
 	string firstLine;
 	getline(ifstream, firstLine);
-	return firstLine.length();
+	return static_cast <int> (firstLine.length());
 }
 
 //counts the number of rows in a txt file by occurences of '\n'

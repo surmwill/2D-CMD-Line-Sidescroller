@@ -9,5 +9,6 @@ public:
 	Debug();
 	~Debug();
 	static void write(const std::string & message);
+	static void write(const int num);
 };
 

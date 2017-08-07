@@ -1,7 +1,11 @@
 #include "Level.h"
+#include <algorithm>
+#include "Debug.h"
 
 using std::unique_ptr;
 using std::vector;
+using std::remove_if;
+using std::find;
 
 // initalized to something of significance in World's constructor
 unique_ptr <Map> Level::map = nullptr;
@@ -34,5 +38,13 @@ vector <Combatent *> Level::enemiesAggrod(const Coordinate & playerPosition) {
 }
 
 void Level::enemyCleanup(const vector <Enemy *> & deceased) {
+	// remove all enemies from the level found in the vector of deceased enemies
+	remove_if(
+		enemies.begin(), 
+		enemies.end(),
+		[&deceased](const unique_ptr <Enemy> & enemy) {
+		return find(deceased.begin(), deceased.end(), enemy.get()) != deceased.end();
+	});
 
+	//Debug::write(enemies.size());
 }

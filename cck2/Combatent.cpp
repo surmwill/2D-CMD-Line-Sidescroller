@@ -12,5 +12,5 @@ Combatent::~Combatent()
 }
 
 bool Combatent::isDead(void) {
-	return false;
+	return true;
 }
