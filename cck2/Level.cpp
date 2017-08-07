@@ -39,12 +39,11 @@ vector <Combatent *> Level::enemiesAggrod(const Coordinate & playerPosition) {
 
 void Level::enemyCleanup(const vector <Enemy *> & deceased) {
 	// remove all enemies from the level found in the vector of deceased enemies
-	remove_if(
-		enemies.begin(), 
-		enemies.end(),
-		[&deceased](const unique_ptr <Enemy> & enemy) {
-		return find(deceased.begin(), deceased.end(), enemy.get()) != deceased.end();
-	});
-
-	//Debug::write(enemies.size());
+	enemies.erase(
+		remove_if(
+			enemies.begin(), 
+			enemies.end(),
+			[&deceased](const unique_ptr <Enemy> & enemy) {
+			return find(deceased.begin(), deceased.end(), enemy.get()) != deceased.end(); }),
+		enemies.end());
 }

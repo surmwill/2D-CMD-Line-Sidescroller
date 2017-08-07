@@ -74,6 +74,7 @@ std::vector <Enemy *> Combat::reportDeadEnemies(void) {
 	vector <Enemy *> downcastEnemies;
 	downcastEnemies.reserve(enemies.size());
 
+	// Determine which enemies are dead and need to be cleared from the game
 	for (auto & enemy : enemies) {
 		if (enemy->isDead()) {
 			try {
@@ -87,19 +88,6 @@ std::vector <Enemy *> Combat::reportDeadEnemies(void) {
 	}
 
 	Debug::write(downcastEnemies.size());
-
-	/* Fill our new downcasted Enemy array */
-	/*try {
-		transform(
-			enemies.begin(),
-			enemies.end(),
-			back_inserter(downcastEnemies),
-			dynamic_caster <Combatent, Enemy>());
-	} // If a dynamic cast fails, catch the error and return nothing
-	catch (Error & badCast) {
-		Debug::write(badCast.getMessage());
-		return vector <Enemy *> {}; 
-	} */
 
 	return downcastEnemies;
 }
