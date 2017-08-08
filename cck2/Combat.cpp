@@ -10,6 +10,7 @@
 using std::vector;
 using std::transform;
 using std::back_inserter;
+using std::unique_ptr;
 
 /* Used to safely dynamic cast one class to another,
 If the cast fails, an errow is thrown */

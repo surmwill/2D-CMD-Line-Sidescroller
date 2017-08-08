@@ -2,6 +2,8 @@
 #include <vector>
 #include "Follower.h"
 #include "Enemy.h"
+#include "Dialogue.h"
+#include <memory>
 
 class Combatent;
 

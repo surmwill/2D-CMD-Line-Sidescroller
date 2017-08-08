@@ -4,6 +4,7 @@
 #include "Subject.h"
 #include "Coordinate.h"
 #include "Combatent.h"
+#include "Dialogue.h"
 
 //add enter combat function
 
@@ -14,7 +15,7 @@ class Player final : public Subject, public Combatent {
 	std::unique_ptr <PlayerImpl> playerImpl;
 
 public:
-	Player(Observer * const map, const Coordinate playerStart);
+	Player(Observer * const map, const Coordinate playerStart, const Dialogue & userInterface);
 	~Player();
 
 	Coordinate & moveLeft(void) override;

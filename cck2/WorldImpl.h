@@ -1,6 +1,7 @@
 #pragma once
 #include <memory>
 #include "Display.h"
+#include "Dialogue.h"
 
 class Level;
 class Player;

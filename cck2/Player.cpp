@@ -14,8 +14,8 @@ using std::string;
 /* Adds the map as one of the player's observers. When
 the player moves, we update the portion of the map the player
 can see. */
-Player::Player(Observer * const map, const Coordinate playerStart):
-	playerImpl(make_unique <PlayerImpl> (playerStart)) {
+Player::Player(Observer * const map, const Coordinate playerStart, const Dialogue & userInterface):
+	playerImpl(make_unique <PlayerImpl> (playerStart, userInterface)) {
 	addObserver(map);
 }
 
