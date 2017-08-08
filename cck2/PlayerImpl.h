@@ -3,9 +3,13 @@
 #include "Coordinate.h"
 #include "Milestones.h"
 #include "Statistics.h"
+#include "Dialogue.h"
 
 struct PlayerImpl {
-	PlayerImpl(const Coordinate playerStart) : position(playerStart) {};
+	PlayerImpl(const Coordinate playerStart, const Dialogue & userInterface) :
+		position(playerStart),
+		playerInterface(userInterface) {};
+
 	Coordinate position;
 	const char playerTile = '+';
 
@@ -14,4 +18,6 @@ struct PlayerImpl {
 
 	// Information about the player (attack, health, etc..)
 	PlayerStats stats;
+
+	Dialogue playerInterface;
 };

@@ -10,6 +10,7 @@
 #include "DisplayedMap.h"
 #include "CmdInterpreter.h"
 #include "DisplayCommands.h"
+#include "Dialogue.h"
 #include <memory>
 
 //delete these
@@ -29,13 +30,12 @@ World::World(CmdInterpreter * const cmd) : worldImpl(make_unique <WorldImpl> ())
 	// Restricts the display's access to the cmdInterpreter's public functions 
 	auto displayCmd = make_unique <DisplayCommands>(cmd); 
 
+	// Create the world
 	worldImpl->display = make_unique <Display>(move(displayCmd));
 
 	/* Restricts the map's access to the display's public functions. Similar to 
 	passing the display but with less access to public functions */
 	auto displayedMap = make_unique <DisplayedMap>(worldImpl->display.get());
-
-	//test commit
 
 	/* Create a new map object which has yet to load a level. The
 	display is the map's observer */
@@ -48,20 +48,17 @@ World::World(CmdInterpreter * const cmd) : worldImpl(make_unique <WorldImpl> ())
 	/* Every Level has access to the map object. The Level owns the map
 	and will thus be responsible for it's destruction */
 	Level::map.reset(dynamic_cast <Map *> (map));
-	//Enemy::map.reset(map, noDelete); //map is passed as an observer here
 
 	/* Start at level one */
 	worldImpl->level = make_unique <LevelOne>();
 
-	/* cast playerInCombat to player for clarity. Combat constructor should
-	take 2 combatents. Statistics should have general stats like health while
-	playerStats should have advanced social stats. Consider removing enemy stats
-	if it's not useful. Figure out how to pass both player and an enemy to the 
-	combat class by aggroing the enemy in the game. Pass through level? */
+	Dialogue userInterface{ worldImpl->display.get() };
+
+	//also pass the user interface to the enemies to give dialogue
 
 	// Spawn the player and pass the map as one of the player's observers
 	// Note static_cast up, and dynamic_cast down
-	worldImpl->player = make_unique <Player>(map, worldImpl->level->getPlayerStart());
+	worldImpl->player = make_unique <Player>(map, worldImpl->level->getPlayerStart(), userInterface);
 }
 
 
