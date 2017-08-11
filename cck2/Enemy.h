@@ -40,7 +40,7 @@ public:
 	virtual Coordinate & moveUp(void) override;
 	virtual Coordinate & moveDown(void) override;
 
-	virtual void giveDialogue(const std::string & text) override;
+	void giveDialogue(const std::string & text, bool slowType = true) override;
 	virtual void takeTurn(void) override = 0;
 	/* End of overwrites from combatent */
 

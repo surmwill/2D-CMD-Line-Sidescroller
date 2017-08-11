@@ -28,10 +28,6 @@ Coordinate & TalDoonCultist::moveDown(void) {
 	return position;
 }
 
-void TalDoonCultist::giveDialogue(const string & text) {
-	Debug::write("Tal'Doon checked");
-}
-
 void TalDoonCultist::patrol(void) {
 
 }

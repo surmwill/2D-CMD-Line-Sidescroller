@@ -17,6 +17,6 @@ public:
 
 	virtual void takeTurn(void) = 0;
 	bool isDead(void);
-	virtual void giveDialogue(const std::string & text) = 0;
+	virtual void giveDialogue(const std::string & text, bool slowType) = 0;
 };
 

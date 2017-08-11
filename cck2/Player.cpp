@@ -78,10 +78,10 @@ Coordinate & Player::position(void) {
 	return playerImpl->position;
 }
 
-void Player::giveDialogue(const string & text) {
-	Debug::write("player checked");
+void Player::giveDialogue(const string & text, bool slowType) {
+	playerImpl->userInterface.displayDialogue("player", "sample text", slowType);
 }
 
 void Player::takeTurn(void) {
-	giveDialogue(" ");
+	giveDialogue("test");
 }

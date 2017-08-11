@@ -24,7 +24,7 @@ struct MapImpl final {
 	int width, height; 
 
 	/* The amount of tiles we can see ahead from our current position (10, 10) */
-	const int visibleDistanceX = 40, visibleDistanceY = 12; 
+	const int visibleDistanceX = 40, visibleDistanceY = 11; //40, 12 
 
 	Coordinate playerOrigin{ 1,1 };
 	vector <vector <char>> visibleArea;

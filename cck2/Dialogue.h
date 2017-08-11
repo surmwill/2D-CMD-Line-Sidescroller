@@ -13,8 +13,8 @@ public:
 	Dialogue(Display * const display) : display{ display } {};
 	~Dialogue() = default;
 
-	void displayDialogue(std::string text) {
-		//display->drawDialogue(0, "tom", "tom", false);
+	void displayDialogue(std::string name, std::string dialogue,  bool slowType = true) {
+		display->drawDialogue(name, dialogue, slowType);
 	}
 };
 

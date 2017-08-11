@@ -348,10 +348,10 @@ waits for a space press */
 void Display::drawDialogue(
 	const string & name, 
 	const string & dialogue,
-	bool finalDialogue,
 	bool slowType) {
-	// clear previous dialogue
-	clearDialogue();
+	// Set our next draw position to the start of the text box
+	setNextDrawPosition(displayImpl->dialogueStarts);
+	displayImpl->currentDialogueLine = displayImpl->dialogueStarts;
 
 	// the text to be displayed
 	string toWrite;
@@ -423,7 +423,8 @@ void Display::drawDialogue(
 	/* What for the player to press space before printing further dialogue */
 	while (!displayImpl->cmd->spacePressed()) {}
 
-	if (finalDialogue) clearDialogue(); // we don't want the last peice of dialogue to sit on the screen forever
+	// clear the dialogue for the next write
+	clearDialogue();
 }
 
 /* Sets the cursor position which corresponds to the next place a character is drawn */

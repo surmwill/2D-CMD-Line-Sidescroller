@@ -8,7 +8,7 @@
 struct PlayerImpl {
 	PlayerImpl(const Coordinate playerStart, const Dialogue & userInterface) :
 		position(playerStart),
-		playerInterface(userInterface) {};
+		userInterface(userInterface) {};
 
 	Coordinate position;
 	const char playerTile = '+';
@@ -19,5 +19,5 @@ struct PlayerImpl {
 	// Information about the player (attack, health, etc..)
 	PlayerStats stats;
 
-	Dialogue playerInterface;
+	Dialogue userInterface;
 };

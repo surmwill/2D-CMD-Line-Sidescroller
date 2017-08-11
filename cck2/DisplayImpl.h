@@ -27,9 +27,9 @@ struct DisplayImpl {
 	const SHORT consoleWidth = 81; //chars across (81)
 
 	const SHORT consoleHeight = 33; // 33 Lines total in the console: (0 - 32)
-	const SHORT mapHeight = 25; // 25 Lines: (0 - 24) are reserved for displaying the map and everything on it
-	const SHORT uiStarts = 25; // 4 Lines: (25 - 28) are reserved for diaplying the u.i
-	const SHORT dialogueStarts = 29; // 4 Lines (29 - 32) are reserved for printing dialogue
+	const SHORT mapHeight = 23; // 25 Lines: (0 - 24) are reserved for displaying the map and everything on it //25
+	const SHORT uiStarts = 23; // 4 Lines: (25 - 28) are reserved for diaplying the u.i //25
+	const SHORT dialogueStarts = 27; // 4 Lines (29 - 32) are reserved for printing dialogue //29
 
 	int currentDialogueLine = dialogueStarts; // The next avalible empty line for drawing dialogue
 	const int dialogueLines = dialogueStarts - uiStarts; //The number of lines availible for drawing dialogue
