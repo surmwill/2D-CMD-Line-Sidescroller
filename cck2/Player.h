@@ -24,7 +24,7 @@ public:
 	Coordinate & moveDown(void) override;
 	Coordinate & position(void);
 
-	void giveDialogue(const std::string & text) override;
+	void giveDialogue(const std::string & text, bool slowType = true) override;
 	void takeTurn(void) override;
 };
 

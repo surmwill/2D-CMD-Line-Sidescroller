@@ -39,7 +39,7 @@ Coordinate & Enemy::moveDown(void) {
 	return position;
 }
 
-void Enemy::giveDialogue(const string & text) {
+void Enemy::giveDialogue(const string & text, bool slowType) {
 
 }
 

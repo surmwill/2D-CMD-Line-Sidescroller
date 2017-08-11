@@ -15,7 +15,6 @@ public:
 	virtual Coordinate & moveUp(void) override;
 	virtual Coordinate & moveDown(void) override;
 
-	virtual void giveDialogue(const std::string & text) override;
 	virtual void patrol(void) override;
 	virtual void takeTurn(void) override;
 	/* End of overwrites from combatent */

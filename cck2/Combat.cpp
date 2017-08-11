@@ -5,8 +5,6 @@
 #include "Debug.h"
 #include "Error.h"
 
-//next steps, make the vector of enemy combatents unqiue_ptrs instead of raw pointers so we can delete them from the map when they die
-
 using std::vector;
 using std::transform;
 using std::back_inserter;
