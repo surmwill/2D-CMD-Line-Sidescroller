@@ -23,8 +23,8 @@ using std::unique_ptr;
 
 /* We require being passed the display which we call 
 directly to redraw the screen */
-Map::Map(std::unique_ptr <DisplayedMap> display):
-	mapImpl(make_unique<MapImpl>(move(display))) {
+Map::Map(std::unique_ptr <DisplayedMap> display, const int mapWidth, const int mapHeight):
+	mapImpl(make_unique<MapImpl>(move(display), mapWidth, mapHeight)) {
 }
 
 /* The spawn point of the player on the map */

@@ -37,9 +37,9 @@ World::World(CmdInterpreter * const cmd) : worldImpl(make_unique <WorldImpl> ())
 	passing the display but with less access to public functions */
 	auto displayedMap = make_unique <DisplayedMap>(worldImpl->display.get());
 
-	/* Create a new map object which has yet to load a level. The
-	display is the map's observer */
-	Observer * map = new Map(move(displayedMap));
+	/* Create a new map object which has yet to load a level. The display is the map's observer. The amount
+	of area we can see on the map corresponds to how much space we allocated in the display for drawing the map */
+	Observer * map = new Map(move(displayedMap), worldImpl->display->mapWidth(), worldImpl->display->mapHeight());
 
 	/* Every Enemy and Enemy subclass has acess to the (Observer) Map object
 	in order to update the display with enemy movements */

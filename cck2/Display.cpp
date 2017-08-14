@@ -217,7 +217,7 @@ void Display::drawMap(vector <vector <char>> & newTiles) {
 
 	/* Go through the previous visible area and redraw only the
 	characters that differ */
-	for (unsigned int i = 0; i < displayImpl->prevDisplay.size(); i++) {
+	for (int i = 0; i < displayImpl->mapHeight; i++) {
 		/* Special case: If the visible area is smaller than the entire screen (height wise) which 
 		newTiles covers, populate the rows of the map we cannot see with spaces */
 		if (i >= newTiles.size()) {
@@ -245,7 +245,7 @@ void Display::drawMap(vector <vector <char>> & newTiles) {
 			break; 
 		}
 
-		for (unsigned int j = 0; j < displayImpl->prevDisplay[0].size(); j++) {
+		for (int j = 0; j < displayImpl->mapWidth; j++) {
 			/* Special case: If the visible area is smaller than the entire screen (width wise), 
 			populate the columns at the end of the row with spaces*/
 			if (j >= newTiles[0].size()) {
@@ -348,15 +348,23 @@ waits for a space press */
 void Display::drawDialogue(
 	const string & name, 
 	const string & dialogue,
+	const int line,
+	const int indent,
 	bool slowType) {
-	// Set our next draw position to the start of the text box
-	setNextDrawPosition(displayImpl->dialogueStarts);
-	displayImpl->currentDialogueLine = displayImpl->dialogueStarts;
+	// Set our next draw position relative to the start of the text box
+	const int startLine = displayImpl->dialogueStarts + line;
+	displayImpl->currentDialogueLine = startLine;
+	setNextDrawPosition(startLine, indent);
 
 	// the text to be displayed
 	string toWrite;
 
-	if(name != "") toWrite = name + ": " + dialogue; // ": " is Appended after a name to pretty print the dialogue
+	// add the corresponding number of spaces to indent
+	for (int i = 0; i < indent; i++) {
+		toWrite += " ";
+	}
+
+	if(name != "") toWrite += name + ": " + dialogue; // ": " is Appended after a name to pretty print the dialogue
 	else toWrite = dialogue; // Otherwise, there is no need to format anything
 
 	int nextLineBreak = displayImpl->consoleWidth; // The character that needs to be a space in it's respected line
@@ -431,4 +439,12 @@ void Display::drawDialogue(
 void Display::setNextDrawPosition(const int row, const int col) {
 	displayImpl->cursor.Y = row;
 	displayImpl->cursor.X = col;
+}
+
+int Display::mapHeight(void) {
+	return displayImpl->mapHeight;
+}
+
+int Display::mapWidth(void) {
+	return displayImpl->mapWidth;
 }

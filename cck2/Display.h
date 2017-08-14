@@ -37,6 +37,11 @@ public:
 	void drawDialogue(
 		const std::string & name, 
 		const std::string & dialogue,
+		const int line,
+		const int indent,
 		bool slowType = true);
+
+	int mapWidth(void);
+	int mapHeight(void);
 };
 

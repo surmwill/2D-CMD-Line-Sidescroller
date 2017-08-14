@@ -79,7 +79,7 @@ Coordinate & Player::position(void) {
 }
 
 void Player::giveDialogue(const string & text, bool slowType) {
-	playerImpl->userInterface.displayDialogue("player", "sample text", slowType);
+	playerImpl->userInterface.displayDialogue("", "What should I do?", 0, 0, slowType);
 }
 
 void Player::takeTurn(void) {

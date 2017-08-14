@@ -15,7 +15,7 @@ class DisplayedMap;
 
 class Map : public Observer {
 public:
-	Map(std::unique_ptr <DisplayedMap> display);
+	Map(std::unique_ptr <DisplayedMap> display, const int mapWidth, const int mapHeight);
 
 	~Map();
 	
