@@ -13,8 +13,13 @@ public:
 	Dialogue(Display * const display) : display{ display } {};
 	~Dialogue() = default;
 
-	void displayDialogue(std::string name, std::string dialogue,  bool slowType = true) {
-		display->drawDialogue(name, dialogue, slowType);
+	void displayDialogue(
+		std::string name, 
+		std::string dialogue, 
+		const int line, 
+		const int indent, 
+		bool slowType = true) {
+		display->drawDialogue(name, dialogue, line, indent, slowType);
 	}
 };
 
