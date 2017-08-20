@@ -29,14 +29,14 @@ struct DisplayImpl {
 	const SHORT consoleHeight = 33; // 33 Lines total in the console: (0 - 32)
 
 	// note the mapHeight and mapWidth must be odd to
-	const SHORT mapHeight = 23; // 25 Lines: (0 - 24) are reserved for displaying the map and everything on it //25
+	const SHORT mapHeight = 23; // 23 Lines: (0 - 22) are reserved for displaying the map and everything on it 
 	const SHORT mapWidth = consoleWidth;
 
-	const SHORT uiStarts = 23; // 4 Lines: (25 - 28) are reserved for diaplying the u.i //25
-	const SHORT dialogueStarts = 27; // 4 Lines (29 - 32) are reserved for printing dialogue //29
+	const SHORT uiStarts = 23; // 4 Lines: (23 - 26) are reserved for diaplying the u.i 
+	const SHORT dialogueStarts = 27; // 6 Lines (27 - 32) are reserved for printing dialogue 
 
 	int currentDialogueLine = dialogueStarts; // The next avalible empty line for drawing dialogue
-	const int dialogueLines = dialogueStarts - uiStarts; //The number of lines availible for drawing dialogue
+	const int dialogueLines = consoleHeight - dialogueStarts; //The number of lines availible for drawing dialogue (6)
 
 	//The maximum length of a dialogue string that can be displayed, unsigned b/c I don't like warnings
 	const unsigned int maxDialogueLength = dialogueLines * consoleWidth; 

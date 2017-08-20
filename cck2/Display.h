@@ -25,6 +25,7 @@ class Display final {
 	void setNextDrawPosition(const int row, const int col = 0);
 	void adjustTextProperties(void);
 	void drawUI(void);
+	void waitForSpacePressToClear(void);
 
 public:
 	Display(std::unique_ptr <DisplayCommands> cmd);
@@ -37,9 +38,12 @@ public:
 	void drawDialogue(
 		const std::string & name, 
 		const std::string & dialogue,
-		const int line,
-		const int indent,
+		const int line = 0,
+		const int indent = 0,
+		bool batchWrite = false,
 		bool slowType = true);
+
+	void drawOptions(const std::vector <std::string> options);
 
 	int mapWidth(void);
 	int mapHeight(void);
