@@ -16,10 +16,11 @@ public:
 	void displayDialogue(
 		std::string name, 
 		std::string dialogue, 
-		const int line, 
-		const int indent, 
 		bool slowType = true) {
-		display->drawDialogue(name, dialogue, line, indent, slowType);
+		/* Dialogue is not allowed to be batch written, no implementation to do so.
+		Since there is no batch writes, there is no need for indentation or drawing on 
+		multiple liens */
+		display->drawDialogue(name, dialogue, 0, 0, false, slowType);
 	}
 };
 

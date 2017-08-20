@@ -7,6 +7,7 @@
 #include <cwchar>
 #include <string>
 #include <cmath>
+#include <array>
 
 //#define NOMINMAX
 //#define WIN32_LEAN_AND_MEAN
@@ -20,6 +21,7 @@ using std::move;
 using std::make_pair;
 using std::wcscpy;
 using std::string;
+using std::array;
 
 //to delete
 #include "Iostream.h"
@@ -37,6 +39,21 @@ Display::Display(unique_ptr <DisplayCommands> cmd): displayImpl(make_unique <Dis
 	drawUI();
 	clearDialogue();
 
+	drawOptions({ 
+	"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+	"b",
+	"c",
+	"ddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+	"e",
+	"f",
+	"g",
+	"h",
+	"i",
+	"j",
+	"k",
+	"l",
+	"m"
+	});
 	/* drawDialogue("sabrina", "hey");
 	drawDialogue("will", "01234567890 1234567890 1234567890 1234567890 1234567890 12345678904 ad dsa gred frefre fwedew 01234567890 1234567890 12 frefre fwedew 01234567890 1234567890 12 frefre fwedew 01234567890 1234567890 12 frefre fwedew 01234567890 1234567890 12 frefre fwedew 01234567890 1234567890 12 1234567890 12");
 	drawDialogue("will", "hi hi hi h ih ih ih ih hi hihi hi hiih ih hiih ih ih hi ihih ");
@@ -350,9 +367,17 @@ void Display::drawDialogue(
 	const string & dialogue,
 	const int line,
 	const int indent,
+	bool batchWrite,
 	bool slowType) {
 	// Set our next draw position relative to the start of the text box
 	const int startLine = displayImpl->dialogueStarts + line;
+
+	// Ensure we are writting within the text box
+	if (startLine >= displayImpl->consoleHeight || indent > displayImpl->consoleWidth) {
+		Debug::write("Text out of bounds");
+		return;
+	}
+
 	displayImpl->currentDialogueLine = startLine;
 	setNextDrawPosition(startLine, indent);
 
@@ -377,10 +402,10 @@ void Display::drawDialogue(
 		/* If the current dialogue toWrite (with formatted spaces) is longer 
 		than what can be drawn on an entirely screen, print an error */
 		if (toWrite.length() > displayImpl->maxDialogueLength) {
-			toWrite = "TEXT ERROR: formatted dialogue length is: " + to_string(toWrite.length())
+			Debug::write("TEXT ERROR: formatted dialogue length is: " + to_string(toWrite.length())
 				+ " characters, the maximum length it  can be is: " + to_string(displayImpl->maxDialogueLength) 
-				+ " characters.";
-			break;
+				+ " characters.");
+			return;
 		}
 	
 		/* If a word is split between two lines, find the last character of the
@@ -429,10 +454,85 @@ void Display::drawDialogue(
 	if(static_cast <int> (toWrite.length()) < displayImpl->consoleWidth) Sleep(100);
 
 	/* What for the player to press space before printing further dialogue */
-	while (!displayImpl->cmd->spacePressed()) {}
+	if (!batchWrite) waitForSpacePressToClear();
+}
 
-	// clear the dialogue for the next write
-	clearDialogue();
+/* Displays a list of options in the text box. Each option may not extend past
+the line it's displayed on for clairty, i.e. we want an easy to read menu */
+void Display::drawOptions(const vector <string> options) {
+	vector <string> linesToDraw;
+	int currOption = 0;
+	int line = 0;
+
+	auto addIndent = [](const int size) {
+		string indent;
+		for (int i = 0; i < size; i++) { indent += " "; }
+		return indent;
+	};
+
+	// options displayed per line
+	const int optionsPerLine = ceil(
+		static_cast <double> (options.size()) / static_cast <double> (displayImpl->dialogueLines));
+
+	// number of lines we need
+	const int numLines = ceil(
+		static_cast <double> (options.size()) / static_cast <double> (optionsPerLine));
+
+	if (numLines > displayImpl->dialogueLines) Debug::write("Not enough lines to display " + to_string(options.size()) + " options.");
+
+	// ensure we have the proper amount of space reserved
+	linesToDraw.resize(numLines);
+	vector <int> indentPerOption(optionsPerLine, 0); 
+
+	/* Create a vector, where each element is a string to be printed on a single line in the menu */
+	for(int line = 0; line < linesToDraw.size(); line++) {
+		// we will need to indent each option to they align properly in columns
+		int indent = 0;
+
+		for (int option = 0; option < optionsPerLine; option++) {
+			if (indent > indentPerOption[option]) indentPerOption[option] = indent;
+
+			// the rightmost option does not need a trailing space
+			if (option == optionsPerLine - 1) linesToDraw[line] += to_string(currOption) + ". " + options[currOption];
+			// any other option alignment does
+			else linesToDraw[line] += to_string(currOption) + ". " + options[currOption] + " ";
+
+			indent = linesToDraw[line].length();
+
+			// next option
+			currOption++;
+
+			// If there are no more options to print but we expect one more option in the line, break
+			if (currOption == options.size()) break;
+		}
+
+		if (static_cast <int> (linesToDraw[line].size()) > displayImpl->consoleWidth) {
+			Debug::write(string{ "ERROR: Options cannot fit within line, either reduce the length of the option or reduce the number of options." } +
+			"There are " + to_string(optionsPerLine) + " options per line, with the last written option being " + to_string(currOption));
+			return;
+		}
+	}
+
+	/* Format the vector with indents */
+	for (int line = 0; line < linesToDraw.size(); line++) {
+
+
+		if (static_cast <int> (linesToDraw[line].size()) > displayImpl->consoleWidth) {
+			Debug::write(string{ "ERROR: Line " + to_string(line) + " cannot be drawn with added indented formatting." });
+		}
+	}
+
+	for (auto o : indentPerOption) {
+		Debug::write(o);
+	}
+
+	// Draw the menu
+	for (int line = 0; line < linesToDraw.size(); line++) {
+		drawDialogue("", linesToDraw[line], line, 0, true);
+	}
+
+	waitForSpacePressToClear();
+	
 }
 
 /* Sets the cursor position which corresponds to the next place a character is drawn */
@@ -447,4 +547,10 @@ int Display::mapHeight(void) {
 
 int Display::mapWidth(void) {
 	return displayImpl->mapWidth;
+}
+
+void Display::waitForSpacePressToClear(void) {
+	/* Wait for the player to press space */
+	while (!displayImpl->cmd->keyPressed(VK_SPACE)) {}
+	clearDialogue();
 }

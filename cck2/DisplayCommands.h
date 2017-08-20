@@ -9,10 +9,11 @@ class DisplayCommands {
 public:
 	DisplayCommands(CmdInterpreter * const cmd) : cmd{ cmd } {};
 
-	/* Returns true when space is pressed so we know for example: 
-	when the player wants to clear already read dialogue */
-	bool spacePressed(void) {
-		return cmd->isPressed(VK_SPACE);
-	};
+	/* Returns true when a key is pressed. For example, we
+	may want to know if the space has been pressed before
+	we clear dialog */
+	bool keyPressed(const int vkey) {
+		return cmd->isPressed(vkey);
+	}
 
 };

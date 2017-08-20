@@ -11,6 +11,7 @@ using std::string;
 
 CmdInterpreter::CmdInterpreter(istream * input) : input{ input }, world{ this } {
 	if (!input) input = &cin;
+	keyHandle = GetStdHandle(STD_INPUT_HANDLE);
 	processInput();
 }
 
@@ -56,7 +57,6 @@ void CmdInterpreter::processInput(void) {
 		/* Regardless of input, make sure the world is properly animated. For 
 		example: enemies should still patrol if the player chooses to not press anything */
 		world.animateWorld();
-
 	}
 }
 
@@ -65,4 +65,17 @@ bool CmdInterpreter::isPressed(const int key) {
 
 	//check if the high-order bit is set as well as the key being pressed
 	return GetKeyState(key) & 0x800; 
+}
+
+void CmdInterpreter::testSpacePress(void) {
+	/* Another better way to handle input. Painfully slow though. Figure out later */
+	HANDLE inputHandle = GetStdHandle(STD_INPUT_HANDLE);
+	DWORD events = 0;
+	INPUT_RECORD ir;
+	DWORD inputSize = 1;
+
+	FlushConsoleInputBuffer(inputHandle);
+	ReadConsoleInput(inputHandle, &ir, inputSize, &events);
+
+	if (ir.Event.KeyEvent.wVirtualKeyCode == VK_RIGHT) Debug::write("right");
 }
