@@ -1,3 +1,1 @@
-0
-72
-77
+The menu's options are too long to display on the console. The longest line with formatting is93 characters

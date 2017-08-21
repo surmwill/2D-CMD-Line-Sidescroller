@@ -39,21 +39,10 @@ Display::Display(unique_ptr <DisplayCommands> cmd): displayImpl(make_unique <Dis
 	drawUI();
 	clearDialogue();
 
-	drawOptions({ 
-	"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-	"b",
-	"c",
-	"ddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
-	"e",
-	"f",
-	"g",
-	"h",
-	"i",
-	"j",
-	"k",
-	"l",
-	"m"
-	});
+	formatOptions({
+		{"aaaaaaaaaaaaaaaaaaaaaaaaaa", "b"},
+		{"d", "aaaaaaaaaaa", "fffffffffffffffffffffffffffffffffffffffffffff"} });
+
 	/* drawDialogue("sabrina", "hey");
 	drawDialogue("will", "01234567890 1234567890 1234567890 1234567890 1234567890 12345678904 ad dsa gred frefre fwedew 01234567890 1234567890 12 frefre fwedew 01234567890 1234567890 12 frefre fwedew 01234567890 1234567890 12 frefre fwedew 01234567890 1234567890 12 frefre fwedew 01234567890 1234567890 12 1234567890 12");
 	drawDialogue("will", "hi hi hi h ih ih ih ih hi hihi hi hiih ih hiih ih ih hi ihih ");
@@ -459,80 +448,60 @@ void Display::drawDialogue(
 
 /* Displays a list of options in the text box. Each option may not extend past
 the line it's displayed on for clairty, i.e. we want an easy to read menu */
-void Display::drawOptions(const vector <string> options) {
-	vector <string> linesToDraw;
-	int currOption = 0;
-	int line = 0;
+void Display::formatOptions(const vector <vector <string>> options) {
+	if (options.size() > displayImpl->dialogueLines) Debug::write("Too many menu lines, the maximum number of lines is " +
+		to_string(displayImpl->dialogueLines));
 
-	auto addIndent = [](const int size) {
-		string indent;
-		for (int i = 0; i < size; i++) { indent += " "; }
-		return indent;
+	auto addIndents = [](const int numIndents) {
+		return string(" ", numIndents);
 	};
+	
+	vector <int> optionIndents;
+	optionIndents.resize(options[0].size(), 0);
+	const int baseFormat = 4; //4 characters needed for base formatting, a bullet point like "1. " and a " " at the end of each menu option
+	int totalOptions = 0;
 
-	// options displayed per line
-	const int optionsPerLine = ceil(
-		static_cast <double> (options.size()) / static_cast <double> (displayImpl->dialogueLines));
+	for (const auto & line : options) {
+		if (totalOptions > 9) Debug::write("Cannot have more than 10 options (0 - 9)");
 
-	// number of lines we need
-	const int numLines = ceil(
-		static_cast <double> (options.size()) / static_cast <double> (optionsPerLine));
+		int indent = 0; // how far right in a line the option will be drawn
+		if (optionIndents.size() < line.size()) optionIndents.resize(line.size(), 0);
 
-	if (numLines > displayImpl->dialogueLines) Debug::write("Not enough lines to display " + to_string(options.size()) + " options.");
+		for (int option = 0; option < line.size(); option++) {
+			if (indent > optionIndents[option]) optionIndents[option] = indent;
+			else indent = optionIndents[option];
 
-	// ensure we have the proper amount of space reserved
-	linesToDraw.resize(numLines);
-	vector <int> indentPerOption(optionsPerLine, 0); 
-
-	/* Create a vector, where each element is a string to be printed on a single line in the menu */
-	for(int line = 0; line < linesToDraw.size(); line++) {
-		// we will need to indent each option to they align properly in columns
-		int indent = 0;
-
-		for (int option = 0; option < optionsPerLine; option++) {
-			if (indent > indentPerOption[option]) indentPerOption[option] = indent;
-
-			// the rightmost option does not need a trailing space
-			if (option == optionsPerLine - 1) linesToDraw[line] += to_string(currOption) + ". " + options[currOption];
-			// any other option alignment does
-			else linesToDraw[line] += to_string(currOption) + ". " + options[currOption] + " ";
-
-			indent = linesToDraw[line].length();
-
-			// next option
-			currOption++;
-
-			// If there are no more options to print but we expect one more option in the line, break
-			if (currOption == options.size()) break;
+			// calculate the indent need for the following option based on the length of our already processed options
+			indent += static_cast <int> (line[option].size()) + baseFormat;
 		}
 
-		if (static_cast <int> (linesToDraw[line].size()) > displayImpl->consoleWidth) {
-			Debug::write(string{ "ERROR: Options cannot fit within line, either reduce the length of the option or reduce the number of options." } +
-			"There are " + to_string(optionsPerLine) + " options per line, with the last written option being " + to_string(currOption));
+		/* The indent needed for the next option corresponds to the total length of the line, we
+		subtract 1 to account for removing the " " at the end of the righmost option, as this is 
+		not part of the line to be drawn */
+		int totalLineLength = indent - 1;
+
+		if (totalLineLength > displayImpl->consoleWidth) {
+			Debug::write("The menu's options are too long to display on the console. The longest line with formatting is " +
+			to_string(totalLineLength) + " characters. The maxmimum number of characters in a line is " + to_string(displayImpl->consoleWidth));
 			return;
 		}
+
+		totalOptions++;
 	}
 
-	/* Format the vector with indents */
-	for (int line = 0; line < linesToDraw.size(); line++) {
+	vector <string> menu;
+	menu.reserve(options.size());
 
-
-		if (static_cast <int> (linesToDraw[line].size()) > displayImpl->consoleWidth) {
-			Debug::write(string{ "ERROR: Line " + to_string(line) + " cannot be drawn with added indented formatting." });
+	for (const auto & line : options) {
+		string formattedLine;
+		for (int option = 0; option < line.size(); option++) {
 		}
 	}
 
-	for (auto o : indentPerOption) {
-		Debug::write(o);
+	for (auto indent : optionIndents) {
+		Debug::write(indent);
 	}
 
-	// Draw the menu
-	for (int line = 0; line < linesToDraw.size(); line++) {
-		drawDialogue("", linesToDraw[line], line, 0, true);
-	}
-
-	waitForSpacePressToClear();
-	
 }
 
 /* Sets the cursor position which corresponds to the next place a character is drawn */

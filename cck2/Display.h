@@ -43,7 +43,7 @@ public:
 		bool batchWrite = false,
 		bool slowType = true);
 
-	void drawOptions(const std::vector <std::string> options);
+	void formatOptions(const std::vector <std::vector <std::string>> options);
 
 	int mapWidth(void);
 	int mapHeight(void);
