@@ -40,8 +40,9 @@ Display::Display(unique_ptr <DisplayCommands> cmd): displayImpl(make_unique <Dis
 	clearDialogue();
 
 	formatOptions({
-		{"aaaaaaaaaaaaaaaaaaaaaaaaaa", "b"},
-		{"d", "aaaaaaaaaaa", "fffffffffffffffffffffffffffffffffffffffffffff"} });
+		{"aaaaaaaaaa", "b", "cccc"},
+		{"d", "aaaaaaaaaaa", "fffffffff"},
+		{"gfewfaEda", "dewdwe", "dewdew", "dwedwedwewef" } });
 
 	/* drawDialogue("sabrina", "hey");
 	drawDialogue("will", "01234567890 1234567890 1234567890 1234567890 1234567890 12345678904 ad dsa gred frefre fwedew 01234567890 1234567890 12 frefre fwedew 01234567890 1234567890 12 frefre fwedew 01234567890 1234567890 12 frefre fwedew 01234567890 1234567890 12 frefre fwedew 01234567890 1234567890 12 1234567890 12");
@@ -449,30 +450,45 @@ void Display::drawDialogue(
 /* Displays a list of options in the text box. Each option may not extend past
 the line it's displayed on for clairty, i.e. we want an easy to read menu */
 void Display::formatOptions(const vector <vector <string>> options) {
+	clearDialogue();
+
+	// we only have 6 lines to work with
 	if (options.size() > displayImpl->dialogueLines) Debug::write("Too many menu lines, the maximum number of lines is " +
 		to_string(displayImpl->dialogueLines));
 
-	auto addIndents = [](const int numIndents) {
-		return string(" ", numIndents);
+	// lambda that returns a string with numSpaces spaces
+	auto addSpaces = [](const int numSpaces) {
+		string spaces;
+
+		for (int i = 0; i < numSpaces; i++) {
+			spaces += ' ';
+		}
+
+		return spaces;
 	};
 	
-	vector <int> optionIndents;
-	optionIndents.resize(options[0].size(), 0);
+	vector <int> optionIndents; // indents for every column of options
 	const int baseFormat = 4; //4 characters needed for base formatting, a bullet point like "1. " and a " " at the end of each menu option
-	int totalOptions = 0;
+	int totalOptions = 0; // keep track of how many options we have processed
 
 	for (const auto & line : options) {
-		if (totalOptions > 9) Debug::write("Cannot have more than 10 options (0 - 9)");
-
 		int indent = 0; // how far right in a line the option will be drawn
-		if (optionIndents.size() < line.size()) optionIndents.resize(line.size(), 0);
+		if (optionIndents.size() < line.size()) optionIndents.resize(line.size(), 0); // are we adding another column?
 
 		for (int option = 0; option < line.size(); option++) {
-			if (indent > optionIndents[option]) optionIndents[option] = indent;
+			if (indent > optionIndents[option]) optionIndents[option] = indent; // choose the greatest indent for every column
 			else indent = optionIndents[option];
 
 			// calculate the indent need for the following option based on the length of our already processed options
 			indent += static_cast <int> (line[option].size()) + baseFormat;
+
+			totalOptions++;
+		}
+
+		// We have keys 0 - 9 there is no "10" key, thus a maximum of 10 options
+		if (totalOptions > 10) {
+			Debug::write("Cannot have more than 10 options (0 - 9)");
+			return;
 		}
 
 		/* The indent needed for the next option corresponds to the total length of the line, we
@@ -485,22 +501,28 @@ void Display::formatOptions(const vector <vector <string>> options) {
 			to_string(totalLineLength) + " characters. The maxmimum number of characters in a line is " + to_string(displayImpl->consoleWidth));
 			return;
 		}
-
-		totalOptions++;
 	}
 
+	/* add formatting, to be put into another function 
+	TODO work on vision around walls in the map and processing options */
+	totalOptions = 0;
 	vector <string> menu;
 	menu.reserve(options.size());
 
-	for (const auto & line : options) {
+	for (int line = 0; line < options.size(); line++) {
 		string formattedLine;
-		for (int option = 0; option < line.size(); option++) {
+
+		for (int option = 0; option < options[line].size(); option++) {
+			const int numSpaces = optionIndents[option] - formattedLine.size();
+
+			formattedLine += addSpaces(numSpaces) + to_string(totalOptions) + ". " + options[line][option];
+			totalOptions++;
 		}
+
+		drawDialogue("", formattedLine, line, 0, true, true);
 	}
 
-	for (auto indent : optionIndents) {
-		Debug::write(indent);
-	}
+	waitForSpacePressToClear();
 
 }
 

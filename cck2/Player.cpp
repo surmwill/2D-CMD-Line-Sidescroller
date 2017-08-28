@@ -84,5 +84,5 @@ void Player::giveDialogue(const string & text, bool slowType) {
 }
 
 void Player::takeTurn(void) {
-	giveDialogue("test");
+	//giveDialogue("test");
 }
